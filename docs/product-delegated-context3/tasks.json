@@ -1,0 +1,428 @@
+{
+  "project": "study-streak",
+  "version": "1.0.0",
+  "tasks": [
+    {
+      "taskId": "TASK-001",
+      "storyId": "STUDY-003",
+      "title": "Setup Expo project with SQLite and AsyncStorage",
+      "description": "Initialize Expo project with required dependencies for offline-first data persistence including expo-sqlite, @react-native-async-storage/async-storage, and project structure",
+      "acceptanceCriteria": [
+        "Expo project initialized with TypeScript template",
+        "expo-sqlite installed and configured",
+        "AsyncStorage installed and configured",
+        "Database schema defined for sessions, streaks, and garden state",
+        "Basic project folder structure created (src/components, src/hooks, src/utils, src/database)"
+      ],
+      "dependencies": [],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "package.json",
+        "src/database/schema.ts",
+        "src/database/connection.ts",
+        "App.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-002",
+      "storyId": "STUDY-003",
+      "title": "Implement database models and CRUD operations",
+      "description": "Create data models and database operations for sessions, streaks, garden state, and user settings",
+      "acceptanceCriteria": [
+        "Session model with create, read, update, delete operations",
+        "Streak model with current streak, longest streak tracking",
+        "Garden state model for plant growth and health",
+        "User settings model for preferences",
+        "All operations work offline without network"
+      ],
+      "dependencies": ["TASK-001"],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "src/models/Session.ts",
+        "src/models/Streak.ts",
+        "src/models/Garden.ts",
+        "src/models/Settings.ts"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-003",
+      "storyId": "STUDY-001",
+      "title": "Create timer hook with background tracking",
+      "description": "Implement useTimer hook that tracks session duration accurately even when app is backgrounded",
+      "acceptanceCriteria": [
+        "Timer starts from 00:00 and counts up",
+        "Timer continues when app is backgrounded using expo-background-task",
+        "Timer state persists across app restarts",
+        "Session recovery dialog shown if app was force-quit during session",
+        "Maximum 4-hour auto-end functionality"
+      ],
+      "dependencies": ["TASK-002"],
+      "priority": "P0",
+      "effort": 4,
+      "filesToModify": [
+        "src/hooks/useTimer.ts",
+        "src/hooks/useBackgroundTimer.ts"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-004",
+      "storyId": "STUDY-001",
+      "title": "Build Timer Screen UI",
+      "description": "Create the timer screen with large digital display, garden mini-view, and session controls",
+      "acceptanceCriteria": [
+        "Large digital timer display (MM:SS format)",
+        "Mini garden view showing current state",
+        "End Session button with secondary styling",
+        "Focus mode toggle button",
+        "Session note quick-add (expandable)",
+        "Under 5-minute warning modal"
+      ],
+      "dependencies": ["TASK-003"],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "src/screens/TimerScreen.tsx",
+        "src/components/TimerDisplay.tsx",
+        "src/components/MiniGarden.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-005",
+      "storyId": "STUDY-006",
+      "title": "Implement notification system",
+      "description": "Setup expo-notifications for daily reminders with customizable time",
+      "acceptanceCriteria": [
+        "Notification permission request with context",
+        "Daily notification scheduling at user-selected time (default 7 PM)",
+        "Notification copy: 'Time to study! Keep your streak alive 🌱'",
+        "Settings to change reminder time",
+        "Graceful handling of permission denial"
+      ],
+      "dependencies": ["TASK-001"],
+      "priority": "P0",
+      "effort": 2,
+      "filesToModify": [
+        "src/hooks/useNotifications.ts",
+        "src/services/notifications.ts"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-006",
+      "storyId": "STUDY-002",
+      "title": "Create garden visualization component",
+      "description": "Build the garden display with growth stages, wilting states, and animations",
+      "acceptanceCriteria": [
+        "Garden component with multiple plant support",
+        "Growth stages: sprout, growing, mature, blooming",
+        "Wilting visual states for missed days",
+        "Healthy garden ambient animation (subtle swaying)",
+        "Freeze state with ice crystal overlay"
+      ],
+      "dependencies": ["TASK-002"],
+      "priority": "P0",
+      "effort": 4,
+      "filesToModify": [
+        "src/components/Garden.tsx",
+        "src/components/Plant.tsx",
+        "src/constants/gardenThemes.ts"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-007",
+      "storyId": "STUDY-002",
+      "title": "Implement session completion celebration",
+      "description": "Create celebration animation and session summary when study session completes",
+      "acceptanceCriteria": [
+        "2-3 second celebration animation on session complete",
+        "Garden growth visible (new leaf, flower blooming)",
+        "Haptic feedback (3 quick pulses)",
+        "Session summary card with duration and streak status",
+        "Support for bonus sessions and new record badges"
+      ],
+      "dependencies": ["TASK-004", "TASK-006"],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "src/components/SessionCompleteModal.tsx",
+        "src/components/CelebrationAnimation.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-008",
+      "storyId": "STUDY-004",
+      "title": "Implement streak tracking logic",
+      "description": "Build streak calculation with 24-hour window and 4 AM grace period",
+      "acceptanceCriteria": [
+        "Streak increments when 5+ min session completed in a day",
+        "Streak resets to 0 if no session by 4 AM next day",
+        "Grace period banner between midnight-4 AM with countdown",
+        "Wilting garden visual during grace period",
+        "Proper handling of timezone and daylight saving"
+      ],
+      "dependencies": ["TASK-002", "TASK-003"],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "src/hooks/useStreak.ts",
+        "src/utils/streakCalculator.ts"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-009",
+      "storyId": "STUDY-005",
+      "title": "Build streak freeze mechanic",
+      "description": "Implement weekly streak freeze allocation and usage UI",
+      "acceptanceCriteria": [
+        "One freeze allocated every Monday at midnight",
+        "Freeze availability indicator on Home Screen",
+        "Prominent CTA during grace period to use freeze",
+        "Ice crystal overlay on streak badge when frozen",
+        "Proper error message if trying to use freeze after streak breaks"
+      ],
+      "dependencies": ["TASK-008"],
+      "priority": "P0",
+      "effort": 2,
+      "filesToModify": [
+        "src/hooks/useStreakFreeze.ts",
+        "src/components/FreezeIndicator.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-010",
+      "storyId": "STUDY-007",
+      "title": "Create history and statistics screen",
+      "description": "Build history screen with 30-day calendar heatmap and stats dashboard",
+      "acceptanceCriteria": [
+        "Stats dashboard: current streak, longest streak, total hours, avg session",
+        "30-day calendar heatmap with color intensity by duration",
+        "Session list with date, time, duration, tags",
+        "Tap day to see session details",
+        "Empty state with encouraging message for new users"
+      ],
+      "dependencies": ["TASK-002"],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "src/screens/HistoryScreen.tsx",
+        "src/components/CalendarHeatmap.tsx",
+        "src/components/StatsDashboard.tsx",
+        "src/components/SessionList.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-011",
+      "storyId": "STUDY-008",
+      "title": "Build onboarding flow",
+      "description": "Create first-time onboarding with welcome, garden intro, and notification setup",
+      "acceptanceCriteria": [
+        "Welcome screen with 'Grow Your Study Habit' headline",
+        "Garden introduction with animated explanation",
+        "Notification permission request with context",
+        "Reminder time picker (default 7 PM)",
+        "First garden view with single sprout",
+        "Progress saved if user exits mid-onboarding"
+      ],
+      "dependencies": ["TASK-005", "TASK-006"],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "src/screens/OnboardingScreen.tsx",
+        "src/components/OnboardingStep.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-012",
+      "storyId": "STUDY-008",
+      "title": "Create Home Screen",
+      "description": "Build main dashboard with garden, streak counter, and primary actions",
+      "acceptanceCriteria": [
+        "Garden visualization as central element",
+        "Streak badge with flame icon: '🔥 [N] day streak'",
+        "Weekly goal progress bar (if set)",
+        "Large 'Start Session' primary CTA",
+        "History secondary button",
+        "Settings icon in header"
+      ],
+      "dependencies": ["TASK-006", "TASK-008", "TASK-011"],
+      "priority": "P0",
+      "effort": 3,
+      "filesToModify": [
+        "src/screens/HomeScreen.tsx",
+        "src/components/StreakBadge.tsx",
+        "src/components/WeeklyGoalBar.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-013",
+      "storyId": "STUDY-010",
+      "title": "Implement focus mode",
+      "description": "Create focus mode with full-screen, keep-awake, and minimal UI",
+      "acceptanceCriteria": [
+        "Focus mode toggle on Timer Screen",
+        "Full-screen mode with no status bar when enabled",
+        "expo-keep-awake prevents screen sleep",
+        "Minimal UI showing only timer and mini garden",
+        "Explicit confirmation required to exit focus mode",
+        "Respect system reduced motion settings"
+      ],
+      "dependencies": ["TASK-004"],
+      "priority": "P1",
+      "effort": 2,
+      "filesToModify": [
+        "src/hooks/useFocusMode.ts",
+        "src/components/FocusModeOverlay.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-014",
+      "storyId": "STUDY-012",
+      "title": "Add session notes and tags",
+      "description": "Implement optional session notes with subject tags",
+      "acceptanceCriteria": [
+        "Optional note prompt on session complete: 'What did you study?'",
+        "Quick-add subject tags: Math, Science, History, Language, Other",
+        "Multiple tag selection support",
+        "200 character limit on notes",
+        "Tags visible in session list and history"
+      ],
+      "dependencies": ["TASK-007"],
+      "priority": "P1",
+      "effort": 2,
+      "filesToModify": [
+        "src/components/SessionNotesInput.tsx",
+        "src/components/SubjectTagChips.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-015",
+      "storyId": "STUDY-011",
+      "title": "Build weekly study goals",
+      "description": "Create weekly hour target setting and progress tracking",
+      "acceptanceCriteria": [
+        "Settings screen to set weekly hour target",
+        "Progress bar on Home Screen: '[X]/[Y] hours this week'",
+        "Progress updates immediately after session",
+        "Progress ring on History Screen",
+        "Weekly reset on Monday (0/[target])",
+        "Goals separate from streak (missing goal doesn't break streak)"
+      ],
+      "dependencies": ["TASK-010", "TASK-012"],
+      "priority": "P1",
+      "effort": 2,
+      "filesToModify": [
+        "src/hooks/useWeeklyGoal.ts",
+        "src/components/WeeklyGoalSettings.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-016",
+      "storyId": "STUDY-009",
+      "title": "Implement unlockable garden themes",
+      "description": "Create milestone-based theme unlocks at 7, 30, and 100 days",
+      "acceptanceCriteria": [
+        "Theme unlock at 7 days (Succulent Garden)",
+        "Theme unlock at 30 days (Flower Bed)",
+        "Theme unlock at 100 days (Bonsai Tree)",
+        "Full-screen celebration modal on unlock",
+        "Theme preview with side-by-side comparison",
+        "Settings > Garden Themes to switch between unlocked themes",
+        "Locked themes show required streak milestone"
+      ],
+      "dependencies": ["TASK-006", "TASK-008"],
+      "priority": "P1",
+      "effort": 3,
+      "filesToModify": [
+        "src/hooks/useGardenThemes.ts",
+        "src/components/ThemeUnlockModal.tsx",
+        "src/components/ThemeSelector.tsx",
+        "src/constants/gardenThemes.ts"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-017",
+      "storyId": "STUDY-007",
+      "title": "Create settings screen",
+      "description": "Build settings screen with notifications, garden themes, goals, and data options",
+      "acceptanceCriteria": [
+        "Notification settings: toggle, reminder time picker",
+        "Garden theme selector",
+        "Weekly goal setting",
+        "Data export option (CSV/JSON)",
+        "Clear history option with confirmation",
+        "About section with version and help"
+      ],
+      "dependencies": ["TASK-012", "TASK-015", "TASK-016"],
+      "priority": "P1",
+      "effort": 2,
+      "filesToModify": [
+        "src/screens/SettingsScreen.tsx",
+        "src/components/SettingsSection.tsx"
+      ],
+      "status": "pending"
+    },
+    {
+      "taskId": "TASK-018",
+      "storyId": "STUDY-001",
+      "title": "Setup navigation structure",
+      "description": "Implement Expo Router navigation with all screens",
+      "acceptanceCriteria": [
+        "Expo Router file-based routing configured",
+        "Navigation between Home, Timer, History, Settings",
+        "Modal presentation for Session Complete",
+        "Onboarding flow as initial route for first-time users",
+        "Deep linking support for future features"
+      ],
+      "dependencies": ["TASK-001"],
+      "priority": "P0",
+      "effort": 2,
+      "filesToModify": [
+        "src/app/_layout.tsx",
+        "src/app/index.tsx",
+        "src/app/timer.tsx",
+        "src/app/history.tsx",
+        "src/app/settings.tsx"
+      ],
+      "status": "pending"
+    }
+  ],
+  "metadata": {
+    "totalTasks": 18,
+    "p0Tasks": 12,
+    "p1Tasks": 6,
+    "totalEffort": 50,
+    "sourceStories": [
+      "STUDY-001",
+      "STUDY-002",
+      "STUDY-003",
+      "STUDY-004",
+      "STUDY-005",
+      "STUDY-006",
+      "STUDY-007",
+      "STUDY-008",
+      "STUDY-009",
+      "STUDY-010",
+      "STUDY-011",
+      "STUDY-012"
+    ],
+    "fallbackGenerated": true,
+    "fallbackReason": "task-planner subagent timed out after 8m 57s"
+  }
+}
