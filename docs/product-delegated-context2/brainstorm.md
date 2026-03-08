@@ -1,147 +1,166 @@
-# Brainstorm: Study Streak
+# Study Streak App - Brainstorm
 
 ## Analysis
 
-Öğrencilerin motivasyon sorunu: Sınav dönemlerinde yoğun çalışma, sonra tamamen bırakma döngüsü. Asıl sorun "çalışma süresi takibi" değil, "sürdürülebilir alışkanlık oluşturma". Streak mekaniği, sosyal onay ve görsel ilerleme ile bu döngüyü kırmak hedeflenmeli.
+The real problem isn't just tracking study time—it's **motivating students to maintain consistent study habits** over time. Students know they should study, but struggle with procrastination, lack of accountability, and losing momentum. The solution needs to tap into psychological drivers (streaks, rewards, social proof) while keeping friction minimal so tracking doesn't become a chore.
 
 ---
 
 ## Ideas
 
-### Idea 1: Pure Streak Tracker
-**What**: Basit günlük çalışma süresi kaydı + kesintisiz gün sayacı
-**Why it works**: Duolingo modeli kanıtlanmış, öğrenciler zaten tanıyor
-**Risk**: Rekabetçi pazar, farklılaşma zor
+### Idea 1: Classic Streak Tracker
+**What**: Simple daily study timer with consecutive day streaks, calendar heatmap, and basic stats
+**Why it works**: Proven gamification model (Duolingo-style), visual progress is motivating
+**Risk**: Streak loss is demotivating; single miss breaks everything
 **Effort**: Low
 
-### Idea 2: Subject-Based Streaks
-**What**: Her ders için ayrı streak (Matematik: 5 gün, Fizik: 3 gün)
-**Why it works**: Öğrenciler farklı derslere farklı öncelik verir, esneklik sağlar
-**Risk**: Karmaşık UI, öğrencileri bunaltabilir
+### Idea 2: Flexible Streak with Recovery
+**What**: Streak system that allows 1-2 "rest days" per week without breaking the chain, plus "freeze" tokens for emergencies
+**Why it works**: Acknowledges real life (exams, sickness, burnout) while maintaining accountability
+**Risk**: Too much flexibility might reduce motivation
+**Effort**: Low
+
+### Idea 3: Study Buddy System
+**What**: Pair or small group accountability where friends can see each other's streaks and send encouragement
+**Why it works**: Social accountability is powerful; peer pressure (positive) drives consistency
+**Risk**: Privacy concerns; friends might drop off leaving user isolated
+**Effort**: Medium (requires backend + social features)
+
+### Idea 4: Subject-Based Streaks
+**What**: Separate streaks per subject/course (Math streak: 12 days, History streak: 5 days) with subject-specific goals
+**Why it works**: Students study multiple subjects; prevents gaming the system with easy subjects
+**Risk**: Complexity increases; might overwhelm users
 **Effort**: Medium
 
-### Idea 3: Pomodoro + Streak Hybrid
-**What**: 25dk çalışma döngüleri + günlük pomodoro sayısı streak'i
-**Why it works**: Zaman yönetimi + alışkanlık birleşimi, üretkenlik odaklı
-**Risk**: Pomodoro zaten çok uygulama var
+### Idea 5: Pomodoro + Streak Hybrid
+**What**: Focus sessions using Pomodoro technique (25min work + 5min break) that count toward daily streak goals
+**Why it works**: Combines time-tested focus method with streak motivation; prevents burnout
+**Risk**: Not everyone likes Pomodoro; rigid structure might annoy some
 **Effort**: Medium
 
-### Idea 4: Study Buddy System
-**What**: Arkadaşlarla grup streak'leri, bir kişi kaçırırsa grup etkilenir
-**Why it works**: Sosyal baskı + hesap verebilirlik güçlü motivatör
-**Risk**: Bağımlılık: arkadaş bırakırsa kullanıcı da bırakır
+### Idea 6: AI Study Coach
+**What**: Simple AI that suggests optimal study times, warns about burnout risk, and celebrates milestones personally
+**Why it works**: Personal touch increases engagement; proactive coaching prevents failure
+**Risk**: AI features can feel gimmicky; requires integration
 **Effort**: High
 
-### Idea 5: Exam Countdown Mode
-**What**: Sınav tarihi girilir, uygulama otomatik çalışma planı + streak hedefleri oluşturur
-**Why it works**: Spesifik hedef (sınav) net motivasyon kaynağı
-**Risk**: Sınav sonrası kullanım düşer (seasonal product)
-**Effort**: Medium
+### Idea 7: Achievement & Badge System
+**What**: Unlock badges for milestones (7-day streak, 100 hours total, early bird, night owl, subject master)
+**Why it works**: Layered rewards beyond just streaks; recognition feels good
+**Risk**: Badge fatigue if overdone; needs careful design
+**Effort**: Low
 
-### Idea 6: Focus Sessions with Lock
-**What**: Çalışma süresince telefonu kilitleyen, sosyal medyayı engelleyen mod
-**Why it works**: Dikkat dağıtıcıları ortadan kaldırır, derin çalışma sağlar
-**Risk**: İzin karmaşası (Android/iOS kısıtlamaları), kullanıcı direnci
-**Effort**: High
-
-### Idea 7: Visual Study Garden
-**What**: Her çalışma günü sanal bahçeye bitki eklenir, streak bozulursa solur
-**Why it works**: Forest uygulaması kanıtlanmış, duygisel bağ oluşturur
-**Risk**: Forest çok popüler, kopya algısı
+### Idea 8: Weekly Challenges & Leaderboards
+**What**: Optional weekly challenges ("Study 10 hours this week") with anonymous leaderboards
+**Why it works**: Competitive drive + fresh goals each week prevent stagnation
+**Risk**: Leaderboards can discourage slower students; must be opt-in
 **Effort**: Medium
 
 ---
 
 ## Tech Direction
 
-- **Recommended stack**: Expo / React Native (zaten belirlenmiş)
-  - One codebase for iOS/Android
-  - AsyncStorage for offline streak data
-  - Expo Notifications for daily reminders
-  - Reanimated for smooth streak animations
+**Recommended Stack: Expo + React Native**
+- Cross-platform (iOS/Android) from single codebase
+- Built-in notifications for streak reminders
+- AsyncStorage for offline-first local data
+- Expo Notifications for push reminders
+- React Native Chart Kit for progress visualization
 
-- **Key technical bets**:
-  - Offline-first: Öğrencilerin interneti olmayabilir
-  - Local notifications: Push notification servisine bağımlılık azaltılacak
-  - Simple backend (Firebase/Supabase): Sadece sosyal özellikler için
+**Key Technical Bets:**
+1. **Offline-first**: Students may not always have connectivity; local storage with sync later
+2. **Background timers**: Must track study time even when app is backgrounded
+3. **Local notifications**: Critical for daily reminders without backend complexity
+
+**What to Reuse:**
+- Expo's managed workflow for rapid iteration
+- Existing React Native timer/stopwatch libraries
 
 ---
 
 ## Recommendation
 
-**Winner: Subject-Based Streaks (Idea 2) + Exam Countdown Mode (Idea 5) kombinasyonu**
+**Go with Idea 2 (Flexible Streak) + Idea 5 (Pomodoro Hybrid) + Idea 7 (Badges)** as the core MVP.
 
-Ders bazlı streak'ler öğrencilere esneklik sunar (tüm gün boş değilse bile bir derse çalışmış olmak yeterli). Sınav modu ise spesifik hedef koyarak motivasyonu artırır. Bu ikisi birlikte "sürekli kullanım" ve "dönemsel yoğunluk" senaryolarını kapsar.
+This combination addresses the core problem: flexible streaks reduce the demotivation of perfect-or-nothing systems, Pomodoro adds structure that helps students actually focus (not just log time), and badges provide layered motivation beyond streaks alone. This is buildable in a reasonable timeframe while still feeling differentiated from simple timer apps.
 
-**Runner-up: Study Buddy System (Idea 4)** - MVP sonrası eklenecek, sosyal özellik büyüme motoru olur.
+Save Idea 3 (Study Buddy) and Idea 6 (AI Coach) for v2—they're compelling but add significant complexity.
 
 ---
 
 ## Combinations
 
-| Combination | Why Strong |
-|-------------|------------|
-| Subject Streaks + Exam Mode | Esneklik + Hedef odaklılık |
-| Pomodoro + Focus Lock | Üretkenlik + Dikkat kontrolü |
-| Study Garden + Buddy System | Kişisel motivasyon + Sosyal hesap verebilirlik |
+**The "Sustainable Study System"**: Flexible Streak + Pomodoro + Badges creates a holistic motivation system:
+- **Flexible Streak**: Keeps users in the game even when life happens
+- **Pomodoro**: Ensures quality study time, not just clock-watching
+- **Badges**: Celebrates different types of achievement (consistency, total time, subject mastery)
+
+This trio covers accountability, focus quality, and recognition—three pillars of sustained habit formation.
 
 ---
 
 ## Summary (for downstream agents)
 
 ```yaml
-feature: study-streak-tracking-app
-selected_direction: subject-based-streaks-with-exam-countdown
+feature: study-streak-app
+topic: Daily study time tracking with streak-based motivation for students
+selected_direction: "Flexible Streak + Pomodoro Hybrid + Achievement System"
 rejected_directions:
-  - pure-streak-tracker: too generic, no differentiation
-  - pomodoro-hybrid: crowded market
-  - focus-lock: permission complexity, high effort
-  - visual-study-garden: too similar to Forest
+  - Classic rigid streak (too punishing, high churn risk)
+  - Study Buddy system (high complexity, v2 candidate)
+  - AI Study Coach (high effort, unclear ROI for MVP)
+  - Weekly leaderboards (can be demotivating, opt-in complexity)
 constraints:
-  platform: mobile-ios-android
-  framework: expo-react-native
-  target_audience: university-high-school-students
+  platform: mobile (iOS/Android)
+  framework: Expo / React Native
+  team_size: small
+  timeline: MVP-focused
   offline_first: true
-  must_work_without_internet: true
 technical_bets:
-  - asyncstorage-for-local-data
-  - expo-local-notifications
-  - minimal-backend-only-for-social
-  - reanimated-for-streak-animations
+  - expo_managed_workflow
+  - react_native_asyncstorage
+  - expo_notifications
+  - background_timer_tracking
+  - local_first_data
 open_questions_for_prd:
-  - how_many_subjects_maximum
-  - what_happens_when_streak_breaks_reset_or_continue
-  - exam_mode_auto_plan_or_manual
-  - social_features_mvp_or_v2
-  - monetization_model_free_premium_or_ads
+  - What defines a "study session" minimum? (5 min? 15 min?)
+  - How many rest days per week? Fixed or user-configurable?
+  - Should Pomodoro be mandatory or optional mode?
+  - Which badges for MVP? How many?
+  - Notification strategy: reminder time, frequency, tone
+  - Data export or backup strategy?
+  - Monetization model (free, freemium, one-time)?
 ```
 
 ---
 
 ## Handoff Contract
 
-**Next Agent**: `prd`
+**Next Agent:** `prd`
 
-**Required Artifacts**: 
-- `docs/product-delegated-context2/brainstorm.md`
+**Required Artifacts:**
+- `docs/product-delegated-context2/brainstorm.md` (this document)
 
-**Recommended Artifacts**:
-- `docs/product-delegated-context2/analysis.md` (if user research available)
+**Recommended Artifacts:**
+- None for this step (no analysis.md available)
 
-**Critical Inputs that must remain stable**:
-- Target audience: University/high school students
-- Platform: Mobile (iOS/Android)
-- Framework: Expo / React Native
-- Core mechanic: Streak-based habit formation
-- Offline-first requirement
+**Critical Inputs That Must Remain Stable:**
+- Target audience: Students (age ~16-25)
+- Core mechanic: Daily study time tracking with streaks
+- Platform: Mobile (iOS/Android via Expo/React Native)
+- Key differentiator: Flexible streak system (not all-or-nothing)
+- MVP scope: Single user, local-first, offline-capable
 
-**Sections That Must Not Change before PRD**:
-- `selected_direction` in Summary YAML
-- `constraints` block
-- `open_questions_for_prd` list
+**Sections That Must Not Change Before PRD:**
+- Selected direction: "Flexible Streak + Pomodoro Hybrid + Achievement System"
+- Technical stack: Expo + React Native
+- Constraints: Offline-first, small team, MVP-focused
+- Open questions listed in Summary YAML (PRD must address these)
 
-**Notes for PRD Agent**:
-- Focus on "Subject-Based Streaks" as primary feature
-- Exam Countdown Mode as secondary/seasonal feature
-- Study Buddy System marked as V2
-- Address open questions in PRD decisions section
+**What PRD Should Produce:**
+- Detailed feature specifications for the three selected ideas
+- Answers to all open questions
+- User flows and screen definitions
+- Data model for streaks, sessions, and achievements
+- Notification strategy specification
+- Success metrics definition

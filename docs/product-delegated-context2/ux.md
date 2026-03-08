@@ -1,422 +1,741 @@
-# UX Specification: Study Streak
+# UX: Study Streak - Daily Study Tracker
+
+## User Goal
+Students want to build consistent study habits by tracking daily study time with a flexible streak system that motivates without punishing real-life interruptions.
 
 ## Analysis
 
-The UX challenge is designing an interface that motivates students without creating toxic productivity pressure. The app must balance "streak anxiety" with positive reinforcement, while handling multiple subjects simultaneously on a small mobile screen. Students need quick entry (they're busy) but also meaningful progress visibility.
+The UX challenge is balancing **motivation with forgiveness**. Students need to feel accountable for consistent studying, but rigid streak systems cause abandonment when life happens (sickness, exams, emergencies). The app must make the flexible streak mechanic immediately understandable—users should never be confused about why their streak continued or broke. Additionally, the Pomodoro feature needs to feel optional, not forced, while still encouraging focused work sessions. The primary risk is user confusion about how the 5-day weekly streak works versus traditional daily streaks.
 
 ---
 
 ## Visual Direction
 
-### Design Philosophy
-- **Warm and encouraging**, not punitive
-- **Clean and focused**, minimal cognitive load
-- **Gamified but respectful**, streaks as celebration not obligation
+### Tone & Feel
+**Encouraging, calm, and focused.** The app should feel like a supportive study companion rather than a demanding taskmaster. Visual feedback should celebrate progress without being overwhelming. The interface should minimize cognitive load—students are already mentally taxed from studying.
 
-### Color Palette
-| Role | Color | Hex | Usage |
-|------|-------|-----|-------|
-| Primary | Warm Orange | `#F97316` | CTAs, streak flames, highlights |
-| Secondary | Calm Blue | `#3B82F6` | Subject cards, stable elements |
-| Success | Emerald Green | `#10B981` | Completed states, confirmations |
-| Warning | Amber | `#F59E0B` | Streak at risk, freeze remaining |
-| Danger | Rose | `#F43F5E` | Streak broken (use sparingly) |
-| Background | Off-White | `#FAFAF9` | Main background |
-| Surface | Pure White | `#FFFFFF` | Cards, modals |
-| Text Primary | Slate 900 | `#0F172A` | Headings, primary text |
-| Text Secondary | Slate 500 | `#64748B` | Subtext, placeholders |
+### Reference Apps
+- **Duolingo** — Streak visualization and gamification patterns (but less aggressive)
+- **Forest** — Focus session UX and calm visual design during timed sessions
+- **Streaks** — Clean habit tracking interface and circular progress indicators
+- **Headspace** — Calm color palette and encouraging microcopy
 
-### Typography
-- **Primary Font**: System default (San Francisco / Roboto)
-- **Heading Sizes**: 28px (H1), 22px (H2), 18px (H3)
-- **Body**: 16px regular, 14px secondary
-- **Streak Numbers**: 48px bold (hero display)
+### Color Direction
+- **Primary**: Warm amber/orange (#F59E0B) — Energy, motivation, warmth without aggression
+- **Secondary**: Deep teal (#0D9488) — Focus, calm, trust
+- **Accent**: Vibrant green (#10B981) — Success states, streak active, goal achieved
+- **Semantic**:
+  - Success: #10B981 (green)
+  - Error: #EF4444 (red)
+  - Warning: #F59E0B (amber)
+  - Info: #3B82F6 (blue)
+- **Neutral**:
+  - Background: #F9FAFB (light gray)
+  - Surface: #FFFFFF (white)
+  - Text Primary: #111827 (near black)
+  - Text Secondary: #6B7280 (gray)
+  - Border: #E5E7EB (light gray)
 
-### Iconography
-- **Library**: Phosphor Icons (bold weight)
-- **Streak Icon**: Flame (`Phosphor.Flame`)
-- **Subject Icons**: Book, Calculator, Flask, Palette, etc.
-- **Action Icons**: Plus, Check, Calendar, Bell
-
-### Animation Principles
-- **Streak increment**: Scale up + flame flicker (300ms, Reanimated)
-- **Card press**: Scale 0.98 + shadow reduction
-- **Success state**: Confetti burst on milestone (7, 30, 100 days)
-- **Page transitions**: Slide from right (iOS style)
+### Typography & Spacing
+- **Font**: System fonts (SF Pro on iOS, Roboto on Android) for native feel
+- **Hierarchy**:
+  - Display: 32-40px (streak count, timer)
+  - Headings: 20-24px (screen titles)
+  - Body: 16px (primary text)
+  - Caption: 12-14px (secondary info)
+- **Spacing**: 16px base unit, generous whitespace to reduce visual clutter
+- **Density**: Medium—compact enough for one-handed use, spacious enough for readability
 
 ---
 
 ## Primary Flows
 
-### Flow 1: Onboarding (First Launch)
+### Flow 1: First-Time Onboarding
+- **User Goal**: Set up the app quickly and understand how the flexible streak works
+- **Trigger**: User opens app for the first time
+- **Steps**:
+  1. Welcome screen with app purpose ("Build study habits that last")
+  2. Brief explanation of flexible streak mechanic ("Study 5 days a week—life happens!")
+  3. Set daily study goal (default: 60 minutes, adjustable in 15-min increments)
+  4. Set daily reminder time (default: 6:00 PM, time picker)
+  5. Optional: Enable notifications permission
+  6. Completion screen with CTA to start first session
+- **Edge Cases**:
+  - User denies notification permission → Store preference, allow retry later in settings
+  - User sets goal to 0 minutes → Show validation error ("Goal must be at least 15 minutes")
+  - User exits mid-onboarding → Save progress, resume on next launch
+- **Success State**: User lands on Home screen with personalized goal and reminder set
+- **PRD Requirement References**:
+  - `PR-004` (Daily goal setting)
+  - `PR-007` (Daily reminder notification)
 
-**User Goal**: Set up the app and add first subject
+### Flow 2: Starting a Study Session (Timer Mode)
+- **User Goal**: Begin tracking study time with simple start/stop timer
+- **Trigger**: User taps "Start Studying" on Home screen
+- **Steps**:
+  1. Session setup screen (optional subject tag, Pomodoro toggle)
+  2. User taps "Start Session"
+  3. Active session screen displays:
+     - Large timer showing elapsed time (MM:SS format)
+     - Pause button (primary action)
+     - Stop/End Session button (secondary, destructive styling)
+     - Current subject (if tagged)
+  4. Timer continues in background if app minimized
+  5. User taps "Stop" to end session
+  6. Session summary modal shows:
+     - Total time studied
+     - Progress toward daily goal
+     - Streak status update
+     - CTA to view history or start another session
+- **Edge Cases**:
+  - Session under 5 minutes → Show warning ("Sessions under 5 min don't count toward streak")
+  - Session interrupted by phone call → Pause automatically, resume prompt on return
+  - App crashes during session → Recover and offer to restore/continue on relaunch
+  - User hits daily goal mid-session → Show celebration toast, continue tracking
+- **Success State**: Session saved, streak updated if applicable, user returned to Home
+- **PRD Requirement References**:
+  - `PR-001` (Daily study timer)
+  - `PR-010` (Background timer)
+  - `PR-101` (Subject tagging - P1)
 
-**Trigger**: App first launch after install
+### Flow 3: Starting a Pomodoro Study Session
+- **User Goal**: Use structured Pomodoro technique for focused study
+- **Trigger**: User enables Pomodoro mode before starting session
+- **Steps**:
+  1. User toggles "Pomodoro Mode" on session setup screen
+  2. Configuration options appear:
+     - Focus duration (default: 25 min, options: 15/25/45/60)
+     - Break duration (default: 5 min, options: 5/10/15)
+  3. User taps "Start Focus Session"
+  4. Active Pomodoro screen displays:
+     - Large countdown timer for current focus period
+     - Visual progress ring showing time remaining
+     - Session count (e.g., "Pomodoro 2 of 4")
+     - Pause button (pauses countdown)
+     - Skip to break (secondary)
+  5. When focus period ends:
+     - Sound/vibration notification
+     - Screen transitions to break view
+     - Break countdown begins automatically
+  6. User can skip break or let it complete
+  7. Auto-prompt to start next Pomodoro or end session
+  8. Final summary shows total focus time and Pomodoros completed
+- **Edge Cases**:
+  - User pauses during focus → Pause countdown, show "Focus Paused" state
+  - User leaves app during Pomodoro → Continue countdown, notify at phase end
+  - Break extends beyond limit → Auto-resume prompt after break duration × 2
+  - User completes partial Pomodoro → Log actual focus time, note as incomplete
+- **Success State**: Full Pomodoro session logged, user sees summary with completed cycles
+- **PRD Requirement References**:
+  - `PR-003` (Pomodoro mode)
+  - `PR-010` (Background timer)
 
-**Steps**:
-1. **Welcome Screen**
-   - Headline: "Çalışma Alışkanlığını Oluştur"
-   - Subtext: "Her gün bir adım, her ders bir zafer"
-   - CTA Button: "Başlayalım" (Primary, full width)
-   - Skip option: "Daha sonra" (text link, bottom)
+### Flow 4: Viewing Streak Status and Calendar
+- **User Goal**: Understand current streak status and study history at a glance
+- **Trigger**: User opens app (Home screen) or taps streak card
+- **Steps**:
+  1. Home screen displays:
+     - Current streak count (large, prominent)
+     - Weekly progress indicator (7 circles, filled for study days)
+     - Rest days remaining indicator ("2 rest days left this week")
+     - Next rest day reset countdown
+  2. User taps streak card or calendar icon
+  3. Calendar view opens showing:
+     - Monthly heatmap (color intensity = study duration)
+     - Day details on tap (duration, sessions, subject breakdown)
+     - Streak history (longest streak, current streak)
+     - Weekly streak status explanation
+  4. User navigates between months
+  5. Tap specific day to see session details for that date
+- **Edge Cases**:
+  - No study history yet → Show empty state with encouraging copy
+  - Streak broken → Show empathetic message, highlight fresh start opportunity
+  - Current week incomplete → Show progress toward 5-day goal
+  - Rest day used → Visual distinction between rest day and missed day
+- **Success State**: User clearly understands streak mechanics and their progress
+- **PRD Requirement References**:
+  - `PR-002` (Flexible streak system)
+  - `PR-005` (Streak visualization)
 
-2. **Add First Subject**
-   - Screen title: "İlk Dersini Ekle"
-   - Input field: "Ders adı" (placeholder: "Matematik, Fizik...")
-   - Color picker: 8 preset colors (circular selection)
-   - Icon picker: 8 subject icons (grid selection)
-   - CTA: "Ekle ve Devam Et"
-   - Validation: Minimum 2 characters
+### Flow 5: Reviewing Session History
+- **User Goal**: Review past study sessions and track progress over time
+- **Trigger**: User taps "History" in navigation or session summary CTA
+- **Steps**:
+  1. History screen loads with:
+     - Filter tabs: All | This Week | This Month
+     - Chronological list of sessions (newest first)
+     - Each card shows: date, duration, subject tag (if any), Pomodoro indicator
+  2. User scrolls through history
+  3. Tap session to view details:
+     - Exact start/end times
+     - Subject
+     - Session type (timer vs Pomodoro)
+     - Notes (if P2 implemented)
+  4. Pull-to-refresh for latest data
+  5. Swipe to delete (with confirmation)
+- **Edge Cases**:
+  - No sessions yet → Empty state with illustration and "Start your first session" CTA
+  - Very long history → Implement lazy loading/infinite scroll
+  - Deleted session affects streak → Recalculate streak, notify user of change
+- **Success State**: User can browse, inspect, and manage their study history
+- **PRD Requirement References**:
+  - `PR-009` (Session history)
+  - `PR-101` (Subject tagging - P1)
 
-3. **Notification Setup**
-   - Screen title: "Günlük Hatırlatma"
-   - Subtext: "Hangi saatte çalışma hatırlatması almak istersin?"
-   - Time picker: Native iOS/Android time picker
-   - Default: 19:00
-   - Toggle: "Hatırlatmaları aç" (default: ON)
-   - CTA: "Tamamla"
+### Flow 6: Managing Notification Settings
+- **User Goal**: Customize when and how the app reminds them to study
+- **Trigger**: User taps Settings → Notifications or onboarding completion
+- **Steps**:
+  1. Notifications settings screen shows:
+     - Daily reminder toggle
+     - Reminder time picker (if enabled)
+     - Sound/vibration preferences
+     - Preview of reminder message
+  2. User adjusts settings
+  3. Test notification button (sends immediate test)
+  4. Changes saved automatically
+  5. Success toast: "Settings saved"
+- **Edge Cases**:
+  - System notification permission denied → Show instructions to enable in Settings app
+  - User sets reminder to current time → Validation error
+  - Notification fails to schedule → Error message with retry option
+- **Success State**: Notification preferences saved, next reminder scheduled
+- **PRD Requirement References**:
+  - `PR-007` (Daily reminder notification)
+  - `PR-106` (Customizable reminder time - P1)
 
-4. **Completion Screen**
-   - Celebration animation (checkmark + subtle confetti)
-   - Headline: "Harika! Hazırsın."
-   - Subtext: "İlk çalışma kaydını eklemeye hazırsın."
-   - CTA: "Ana Ekrana Git"
-
-**Edge Cases**:
-- User skips onboarding → Show empty state on home with "İlk Dersini Ekle" CTA
-- Notification permission denied → Continue silently, show settings reminder later
-- Subject name too short → Inline error: "En az 2 karakter gerekli"
-
-**Success State**: User lands on Home with at least 1 subject visible
-
-**PRD Requirement References**: PR-001, PR-006
-
----
-
-### Flow 2: Daily Study Log Entry
-
-**User Goal**: Record today's study session quickly
-
-**Trigger**: User taps "+" or a subject card on Home
-
-**Steps**:
-1. **Subject Selection** (if triggered from "+")
-   - Bottom sheet with subject list
-   - Each row: Color dot + Subject name + Current streak
-   - Tap to select, auto-advance to next step
-
-2. **Duration Entry**
-   - Screen title: "Çalışma Süresi"
-   - Large time display: "00:00" (hours:minutes)
-   - Number pad: 0-9, backspace, quick presets (15, 30, 45, 60 min)
-   - Minimum indicator: "En az 15 dk"
-   - Validation: <15 min shows "En az 15 dakika gerekli"
-
-3. **Date Confirmation**
-   - Default: Bugün (Today)
-   - Option to change: "Tarih Değiştir" → Calendar picker
-   - Cannot select future dates
-   - Past dates limited to 7 days
-
-4. **Optional Note (P1)**
-   - Collapsible section: "Not ekle (isteğe bağlı)"
-   - Text input: max 280 characters
-   - Character counter
-
-5. **Confirmation**
-   - Summary card: Subject + Duration + Date
-   - Primary CTA: "Kaydet"
-   - Success animation: Checkmark + streak update
-   - Auto-return to Home after 1.5s
-
-**Edge Cases**:
-- Duration <15 min → Disable save, show error
-- Same day, same subject entry → Accumulate or replace (config in settings)
-- Future date selected → Show error "Gelecek tarih seçilemez"
-- Offline → Queue locally, show "Çevrimdışı kaydedildi" toast
-
-**Success State**: Home screen updates with new streak count or maintained streak
-
-**PRD Requirement References**: PR-002, PR-003, PR-005
-
----
-
-### Flow 3: Home Dashboard
-
-**User Goal**: See all subjects' status at a glance
-
-**Trigger**: App open, or return from any flow
-
-**Screen Structure**:
-
-**Header**:
-- App logo/icon (left)
-- Settings gear (right)
-- Current date: "8 Mart 2026, Cumartesi"
-
-**Today's Summary** (Sticky card):
-- Title: "Bugünkü Durum"
-- Progress: "3/5 ders tamamlandı" (if daily goals set)
-- Or: "45 dk toplam çalışma"
-- Visual: Circular progress or flame count
-
-**Subject Grid** (Main content):
-- 2-column grid on phones
-- Each subject card:
-  - Color-coded top border (4px)
-  - Subject icon
-  - Subject name (2 lines max, truncate)
-  - Streak count with flame icon: "🔥 12"
-  - Today's status: Checkmark or empty circle
-  - Tap: Open detail / Add log
-
-**Empty State** (no subjects):
-- Illustration: Empty desk/books
-- Headline: "Henüz ders eklemedin"
-- CTA: "İlk Dersini Ekle"
-
-**Floating Action Button**:
-- Position: Bottom right, 16px from edges
-- Icon: Plus
-- Action: Open subject selector → Duration entry
-
-**Pull-to-Refresh**:
-- Only for sync status (mainly visual since offline-first)
-- Shows "Son güncelleme: 2 dk önce"
-
-**Edge Cases**:
-- 10+ subjects → Scrollable grid, maintain 2-column
-- Long subject names → Truncate with ellipsis
-- Streak broken yesterday → Show "Dün kaçırdın" badge on that subject
-
-**PRD Requirement References**: PR-004, PR-005
-
----
-
-### Flow 4: Subject Detail & Streak History
-
-**User Goal**: View detailed progress for a specific subject
-
-**Trigger**: Tap on subject card from Home
-
-**Steps**:
-1. **Subject Header**
-   - Large icon + color background
-   - Subject name
-   - Current streak: "🔥 12 günlük seri"
-   - Longest streak: "En yüksek: 25"
-   - Total study time: "Toplam: 45 saat"
-
-2. **Calendar View**
-   - Month view with study days highlighted
-   - Color intensity based on duration (heatmap style)
-   - Tap day → Show details (duration, note if any)
-   - Navigation: Swipe left/right for months
-
-3. **Recent Sessions List**
-   - Last 10 sessions
-   - Each row: Date + Duration + Note preview
-   - Empty: "Henüz kayıt yok"
-
-4. **Actions**
-   - "Bugün Çalıştım" → Go to Flow 2 with subject pre-selected
-   - "Dersi Düzenle" → Edit name/color
-   - "Dersi Sil" → Confirmation modal
-
-**Edge Cases**:
-- Streak broken → Show "Serin kırıldı" with date, offer encouragement
-- No history → Show onboarding-style illustration
-
-**PRD Requirement References**: PR-003, PR-004
+### Flow 7: Viewing Unlocked Badges
+- **User Goal**: See achievements earned and discover upcoming milestones
+- **Trigger**: User taps "Badges" in navigation or earns new badge
+- **Steps**:
+  1. Badges screen displays:
+     - Recently earned badges (highlighted at top)
+     - Grid of all badges (locked and unlocked)
+     - Progress indicators for in-progress badges
+  2. Tap badge to view details:
+     - Badge name and description
+     - Unlock criteria
+     - Date earned (if unlocked)
+     - Rarity indicator (common/rare/epic)
+  3. New badge earned → Celebrate with modal animation
+  4. Share badge option (if P2 social features)
+- **Edge Cases**:
+  - No badges earned yet → Show locked grid with hints on how to unlock
+  - Badge criteria unclear → Detailed explanation on tap
+  - Multiple badges earned at once → Queue celebration modals
+- **Success State**: User sees all achievements, understands how to earn more
+- **PRD Requirement References**:
+  - `PR-008` (Core badge system)
+  - `PR-103` (Extended badge set - P1)
 
 ---
 
-### Flow 5: Exam Mode
+## Screen/Component Breakdown
 
-**User Goal**: Set up exam countdown with study targets
+### Screen: Home (Dashboard)
+- **Purpose**: Primary entry point showing daily progress, streak status, and main CTA
+- **Layout**: 
+  - Top: Header with settings icon
+  - Middle: Streak card (large number + weekly progress)
+  - Center: Daily progress ring (toward goal)
+  - Bottom: "Start Studying" primary CTA button
+- **Key Elements**:
+  - Streak counter with flame icon
+  - 7-day weekly progress dots
+  - Rest days remaining badge
+  - Circular progress indicator for daily goal
+  - Subject quick-select (if P1)
+- **Primary Action**: "Start Studying" button
+- **Edge Cases**:
+  - Daily goal achieved → Progress ring complete, celebratory state
+  - Streak at risk (no study for 4 days) → Warning styling on streak card
+  - First open → Onboarding prompt instead of dashboard
+- **Flow References**:
+  - Flow 2 (Start study session)
+  - Flow 4 (View streak status)
+- **PRD Requirement References**:
+  - `PR-004` (Daily goal)
+  - `PR-005` (Streak visualization)
 
-**Trigger**: User taps "Sınav Ekle" from Home or Settings
+### Screen: Session Setup
+- **Purpose**: Configure study session before starting
+- **Layout**:
+  - Top: "New Session" header
+  - Middle: Subject selector (dropdown/chips)
+  - Toggle: Pomodoro mode
+  - Pomodoro settings (conditional)
+  - Bottom: "Start Session" button
+- **Key Elements**:
+  - Subject tag selector (optional)
+  - Pomodoro mode toggle
+  - Focus duration selector (15/25/45/60 min)
+  - Break duration selector (5/10/15 min)
+- **Primary Action**: "Start Session" button
+- **Edge Cases**:
+  - No subjects created yet → "Add your first subject" prompt
+  - Pomodoro toggled off → Hide duration selectors, show simple timer mode
+- **Flow References**:
+  - Flow 2 (Timer mode)
+  - Flow 3 (Pomodoro mode)
+- **PRD Requirement References**:
+  - `PR-001` (Daily timer)
+  - `PR-003` (Pomodoro mode)
+  - `PR-101` (Subject tagging - P1)
 
-**Steps**:
-1. **Exam Creation**
-   - Screen title: "Yeni Sınav"
-   - Input: "Sınav adı" (placeholder: "TYT, KPSS, Final...")
-   - Date picker: Sınav tarihi (minimum: tomorrow, maximum: 2 years)
-   - Subject selection: "Hangi derslerden sorumlusun?"
-     - Multi-select from existing subjects
-     - Or: "Tüm dersler"
+### Screen: Active Session (Timer Mode)
+- **Purpose**: Track ongoing study session with minimal distraction
+- **Layout**:
+  - Full-screen or near full-screen
+  - Center: Large elapsed time display
+  - Bottom: Pause and Stop buttons
+  - Top: Subject indicator (if tagged)
+- **Key Elements**:
+  - Elapsed time (MM:SS, large typography)
+  - Pause/Resume button (circular, prominent)
+  - Stop/End button (square, secondary)
+  - Background-safe timer indicator
+- **Primary Action**: Pause/Resume
+- **Edge Cases**:
+  - App backgrounded → Continue timer, show notification option
+  - Phone call incoming → Auto-pause, resume prompt after
+  - Daily goal reached → Celebration overlay, continue option
+- **Flow References**:
+  - Flow 2 (Timer mode)
+- **PRD Requirement References**:
+  - `PR-001` (Daily timer)
+  - `PR-010` (Background timer)
 
-2. **Target Calculation**
-   - Auto-calculate: "Günlük ortalama 2 saat çalışman gerekli"
-   - Show formula: "Toplam hedef / Kalan gün"
-   - Allow manual override: "Günlük hedefi düzenle"
+### Screen: Active Pomodoro Session
+- **Purpose**: Guide user through Pomodoro cycles with clear phase indicators
+- **Layout**:
+  - Center: Countdown timer with circular progress ring
+  - Below: Phase label ("Focus Time" / "Break Time")
+  - Bottom: Session controls
+  - Top: Pomodoro counter ("2 of 4")
+- **Key Elements**:
+  - Countdown timer (MM:SS)
+  - Animated progress ring (fills/empties)
+  - Phase indicator with color coding (focus=teal, break=green)
+  - Pause, Skip, and End buttons
+  - Session count tracker
+- **Primary Action**: Complete current phase
+- **Edge Cases**:
+  - User pauses focus → "Focus Paused" overlay
+  - Break extends too long → "Ready to focus?" prompt
+  - Session interrupted → Save progress dialog on return
+- **Flow References**:
+  - Flow 3 (Pomodoro mode)
+- **PRD Requirement References**:
+  - `PR-003` (Pomodoro mode)
+  - `PR-010` (Background timer)
 
-3. **Dashboard Integration**
-   - Home screen shows countdown badge: "TYT'ye 45 gün"
-   - Subject cards show exam-specific progress
-   - Push notification: "TYT'ye son 7 gün! Hedef: 4 saat"
+### Screen: Session Summary
+- **Purpose**: Confirm session completion and show progress impact
+- **Layout**: Modal overlay
+  - Top: Celebration illustration/animation
+  - Stats: Duration, goal progress, streak impact
+  - Action buttons: "View History", "Start Another", "Close"
+- **Key Elements**:
+  - Duration studied
+  - Daily goal progress (before/after)
+  - Streak status message
+  - Subject summary (if tagged)
+  - Badge earned notification (if applicable)
+- **Primary Action**: "Close" or "Start Another"
+- **Edge Cases**:
+  - Session under 5 min → Warning that it won't count
+  - Goal completed → Special celebration state
+  - Badge unlocked → Badge celebration overlay
+- **Flow References**:
+  - Flow 2, 3 (Session completion)
+- **PRD Requirement References**:
+  - `PR-001` (Daily timer)
+  - `PR-008` (Badge system)
 
-**Edge Cases**:
-- Past date selected → Error
-- No subjects selected → Error "En az bir ders seçmelisin"
-- Exam date passed → Auto-archive, show summary
+### Screen: Calendar/Streak View
+- **Purpose**: Visualize study history and streak mechanics
+- **Layout**:
+  - Top: Month selector
+  - Middle: Monthly heatmap grid
+  - Bottom: Selected day details panel
+- **Key Elements**:
+  - Monthly calendar heatmap (color intensity = duration)
+  - Day cell states: studied, rest day, missed, today
+  - Legend explaining colors
+  - Day detail panel (duration, sessions)
+  - Streak statistics (current, longest)
+- **Primary Action**: Browse history
+- **Edge Cases**:
+  - No history → Empty state with sample visualization
+  - Streak broken → Highlight break point with explanation
+- **Flow References**:
+  - Flow 4 (View streak status)
+- **PRD Requirement References**:
+  - `PR-002` (Flexible streak)
+  - `PR-005` (Streak visualization)
 
-**Success State**: Exam appears on Home with countdown, subjects show exam badge
+### Screen: History List
+- **Purpose**: Browse and manage past study sessions
+- **Layout**:
+  - Top: Filter tabs (All/Week/Month)
+  - Middle: Chronological list
+  - Pull-to-refresh
+- **Key Elements**:
+  - Session cards (date, duration, subject, type)
+  - Swipe-to-delete
+  - Empty state illustration
+  - Load more indicator
+- **Primary Action**: View session details
+- **Edge Cases**:
+  - Empty history → "Start your first session" CTA
+  - Deleted session → Confirmation dialog, streak recalculation
+- **Flow References**:
+  - Flow 5 (Review history)
+- **PRD Requirement References**:
+  - `PR-009` (Session history)
 
-**PRD Requirement References**: PR-007
+### Screen: Badges
+- **Purpose**: Display achievements and progress
+- **Layout**:
+  - Top: Recently earned section
+  - Grid: All badges (locked/unlocked)
+- **Key Elements**:
+  - Badge cards with icon, name, lock state
+  - Progress bar for in-progress badges
+  - Rarity indicator (border color)
+  - Detail modal on tap
+- **Primary Action**: Explore badge details
+- **Edge Cases**:
+  - No badges earned → Grid of mystery badges with hints
+  - All badges earned → "Master Scholar" celebration
+- **Flow References**:
+  - Flow 7 (View badges)
+- **PRD Requirement References**:
+  - `PR-008` (Core badges)
+  - `PR-103` (Extended badges - P1)
+
+### Screen: Settings
+- **Purpose**: Configure app preferences
+- **Layout**: Standard settings list
+- **Key Elements**:
+  - Daily goal setting
+  - Notification preferences
+  - Sound/vibration settings
+  - Data export (P1)
+  - About/Legal
+- **Primary Action**: Adjust preferences
+- **Edge Cases**:
+  - Goal set too low/high → Validation warning
+  - Notification permission denied → Help text with instructions
+- **Flow References**:
+  - Flow 6 (Notification settings)
+- **PRD Requirement References**:
+  - `PR-004` (Daily goal)
+  - `PR-007` (Notifications)
+  - `PR-106` (Custom reminder - P1)
+  - `PR-107` (Data export - P1)
 
 ---
 
-### Flow 6: Settings
+## Components
 
-**User Goal**: Manage app preferences and data
+### Component: Streak Card
+- **Purpose**: Display current streak with weekly progress
+- **Elements**:
+  - Large streak number with flame icon
+  - "day streak" label
+  - 7-dot weekly progress indicator
+  - Rest days remaining badge
+- **States**:
+  - Normal: Standard styling
+  - At risk: Warning color (amber)
+  - Broken: Grayed out with reset message
+  - Just earned: Celebration animation
 
-**Sections**:
+### Component: Daily Progress Ring
+- **Purpose**: Show progress toward daily goal
+- **Elements**:
+  - Circular progress indicator
+  - Center: Time remaining or percentage
+  - Goal met: Checkmark + celebration
+- **States**:
+  - In progress: Partial fill
+  - Complete: Full fill + checkmark
+  - Overachieved: Full fill + overflow indicator
 
-**Bildirimler**:
-- Daily reminder toggle
-- Time picker (if enabled)
-- Sound toggle
+### Component: Session Card
+- **Purpose**: Display session in history list
+- **Elements**:
+  - Date and time
+  - Duration (prominent)
+  - Subject tag chip (if applicable)
+  - Pomodoro indicator icon
+  - Swipe actions (delete)
 
-**Veri**:
-- Export data (JSON)
-- Import data
-- Clear all data (with confirmation)
+### Component: Badge Card
+- **Purpose**: Display achievement badge
+- **Elements**:
+  - Badge icon (locked/unlocked states)
+  - Badge name
+  - Rarity border color
+  - Progress bar (if in progress)
+- **States**:
+  - Locked: Grayscale, hidden criteria or hint
+  - Unlocked: Full color, criteria visible, date earned
+  - New: Glow/pulse animation until viewed
 
-**Tema**:
-- Light/Dark/System
-
-**Hakkında**:
-- App version
-- Privacy policy
-- Rate app
-
-**PRD Requirement References**: PR-006, PR-105
+### Component: Weekly Progress Dots
+- **Purpose**: Show 7-day study pattern at a glance
+- **Elements**:
+  - 7 circles representing days (Mon-Sun)
+  - States: empty (rest day available), filled (studied), crossed (rest day used), missed (no study)
+  - Today indicator
 
 ---
 
-## Component Library
+## Interaction Patterns
 
-### Subject Card
-```
-┌─────────────────────────┐
-│ ████████████ (color bar)│
-│                         │
-│    [Icon]               │
-│                         │
-│  Matematik              │
-│  🔥 12      ○           │
-└─────────────────────────┘
-```
-- Size: ~160x140px (2-column grid)
-- Border radius: 16px
-- Shadow: 0 2px 8px rgba(0,0,0,0.08)
-- Pressed: Scale 0.98, shadow reduces
+### Navigation
+- **Bottom Tab Bar**: Home | History | Badges | Settings
+- **Modal Flows**: Onboarding, session setup, session summary
+- **Back Behavior**: 
+  - During active session → Confirm exit dialog
+  - Settings → Auto-save, immediate apply
 
-### Streak Badge
-- Flame icon + number
-- Color: Orange for active, Gray for broken
-- Size: 24px icon + 16px number
+### Feedback Mechanisms
+- **Haptic**: Light tap on buttons, success pattern on goal completion
+- **Sound**: Optional gentle chime on session complete, Pomodoro phase end
+- **Visual**: 
+  - Toast notifications for saves and updates
+  - Celebration animation for goal/streak achievements
+  - Progress animations (rings filling, counters incrementing)
 
-### Duration Input
-- Large display: 48px monospace
-- Number pad: 60px touch targets
-- Preset chips: 15, 30, 45, 60
+### Timer Behavior
+- **Background**: Continue counting, local notification at goal/Pomodoro end
+- **Interruption**: Auto-pause on phone call, offer resume
+- **Accuracy**: ±5 seconds tolerance for background operation
 
-### Toast Notifications
-- Position: Bottom center
-- Duration: 3 seconds
-- Types: Success (green), Error (red), Info (blue)
+### Form Interactions
+- **Time Pickers**: Native iOS/Android time wheels
+- **Durations**: 15-minute increment steppers
+- **Toggles**: Immediate apply with haptic feedback
+
+### Loading States
+- **Initial load**: Skeleton screen for history/calendar
+- **Session save**: Spinner on "Stop" button briefly
+- **Settings save**: Immediate with toast confirmation
+
+---
+
+## Copy Direction
+
+### Onboarding Copy
+- **Welcome**: "Build study habits that last"
+- **Streak Explanation**: "Study 5 days a week—life happens! Rest days keep you motivated without the guilt."
+- **Goal Prompt**: "How long do you want to study each day?"
+- **Reminder Prompt**: "When should we remind you to study?"
+
+### Home Screen Copy
+- **CTA**: "Start Studying"
+- **Goal Progress**: "45 of 60 minutes today"
+- **Streak Labels**: 
+  - "5 day streak 🔥"
+  - "2 rest days left this week"
+  - "Streak at risk—study today!"
+
+### Session Copy
+- **Start**: "Ready to focus?"
+- **During**: "Keep going! You're doing great."
+- **Goal Reached**: "Daily goal complete! 🎉"
+- **Under 5 min warning**: "Sessions under 5 minutes won't count toward your streak."
+
+### Pomodoro Copy
+- **Focus Phase**: "Focus Time"
+- **Break Phase**: "Break Time"
+- **Complete**: "Pomodoro complete! Take a breath."
+- **Session End**: "Great focus! You completed X Pomodoros."
+
+### Badge Copy
+- **First Session**: "First Steps" — "Complete your first study session"
+- **7-Day Streak**: "Week Warrior" — "Study 7 days in a row"
+- **30-Day Streak**: "Month Master" — "Maintain a 30-day streak"
+- **100 Hours**: "Century Club" — "Study for 100 total hours"
+
+### Empty States
+- **No History**: "No sessions yet. Your study journey starts with a single session!"
+- **No Badges**: "Badges await! Complete sessions to unlock achievements."
+- **Calendar Empty**: "This month is a blank canvas. Start filling it with study sessions!"
+
+### Error Copy
+- **Notification Denied**: "Enable notifications in Settings to get daily reminders."
+- **Session Too Short**: "This session is quite short. Keep going to make it count!"
+- **Timer Error**: "Something went wrong. Your session was saved up to [time]."
 
 ---
 
 ## Accessibility
 
-- Touch targets: Minimum 44x44px
-- Color contrast: WCAG AA minimum
-- Screen reader labels for all interactive elements
-- Streak status announced: "Matematik, 12 günlük seri"
-- Reduced motion support for animations
+### Screen Reader Support
+- **Timer Announcements**: Announce elapsed time every 5 minutes during active session
+- **Progress Indicators**: Include percentage/value in accessibility label
+- **Visual States**: Describe streak status verbally ("5 day streak, 2 rest days remaining")
+- **Badges**: Read badge name, description, and unlock status
+
+### Color & Contrast
+- **Minimum Contrast**: 4.5:1 for all text (WCAG AA)
+- **Streak Status**: Don't rely solely on color; use icons and text
+- **Heatmap**: Provide pattern/texture alternatives for colorblind users
+
+### Touch Targets
+- **Minimum Size**: 44×44 points for all interactive elements
+- **Spacing**: 8 points minimum between adjacent targets
+- **Timer Buttons**: Extra large (60×60) during active session for easy access
+
+### Motion & Animation
+- **Respect Reduced Motion**: Disable celebratory animations when system setting enabled
+- **Essential Motion**: Timer progress and state changes remain visible
+- **Badge Animations**: Static fallback for reduced motion preference
+
+### Input Methods
+- **Keyboard Navigation**: Full support for settings and form screens
+- **Voice Control**: All buttons labeled for voice command compatibility
+- **Switch Control**: Logical navigation order for accessibility switches
 
 ---
 
 ## Summary (for downstream agents)
 
 ```yaml
-feature: "Study Streak - UX Specification"
+feature: "study-streak-app"
 source_artifacts:
   prd: "docs/product-delegated-context2/prd.md"
   brainstorm: "docs/product-delegated-context2/brainstorm.md"
+platform: "mobile"
+framework: "Expo / React Native"
 primary_flows:
-  - name: "Onboarding"
-    screens: ["Welcome", "Add Subject", "Notification Setup", "Completion"]
-    prd_coverage: ["PR-001", "PR-006"]
-  - name: "Daily Study Log"
-    screens: ["Subject Select", "Duration Entry", "Date Confirm", "Note (P1)", "Save"]
-    prd_coverage: ["PR-002", "PR-003", "PR-005"]
-  - name: "Home Dashboard"
-    screens: ["Header", "Today Summary", "Subject Grid", "Empty State"]
-    prd_coverage: ["PR-004", "PR-005"]
-  - name: "Subject Detail"
-    screens: ["Header", "Calendar", "Recent Sessions", "Actions"]
-    prd_coverage: ["PR-003", "PR-004"]
-  - name: "Exam Mode"
-    screens: ["Exam Creation", "Target Calculation"]
-    prd_coverage: ["PR-007"]
+  - name: "First-Time Onboarding"
+    user_goal: "Set up app and understand flexible streak mechanics"
+    prd_requirements: ["PR-004", "PR-007"]
+    screens: ["Onboarding", "Home"]
+  - name: "Starting a Study Session (Timer Mode)"
+    user_goal: "Track study time with simple start/stop timer"
+    prd_requirements: ["PR-001", "PR-010", "PR-101"]
+    screens: ["Session Setup", "Active Session", "Session Summary"]
+  - name: "Starting a Pomodoro Study Session"
+    user_goal: "Use structured Pomodoro technique for focused study"
+    prd_requirements: ["PR-003", "PR-010"]
+    screens: ["Session Setup", "Active Pomodoro", "Session Summary"]
+  - name: "Viewing Streak Status and Calendar"
+    user_goal: "Understand streak status and study history"
+    prd_requirements: ["PR-002", "PR-005"]
+    screens: ["Home", "Calendar View"]
+  - name: "Reviewing Session History"
+    user_goal: "Review past study sessions and progress"
+    prd_requirements: ["PR-009", "PR-101"]
+    screens: ["History List"]
+  - name: "Managing Notification Settings"
+    user_goal: "Customize study reminders"
+    prd_requirements: ["PR-007", "PR-106"]
+    screens: ["Settings"]
+  - name: "Viewing Unlocked Badges"
+    user_goal: "See achievements and discover milestones"
+    prd_requirements: ["PR-008", "PR-103"]
+    screens: ["Badges"]
+screens:
+  - name: "Home"
+    flows: ["Viewing Streak Status", "Starting Study Session"]
+    components: ["Streak Card", "Daily Progress Ring", "Weekly Progress Dots"]
+  - name: "Session Setup"
+    flows: ["Timer Mode", "Pomodoro Mode"]
+  - name: "Active Session"
+    flows: ["Timer Mode"]
+  - name: "Active Pomodoro"
+    flows: ["Pomodoro Mode"]
+  - name: "Session Summary"
+    flows: ["Timer Mode", "Pomodoro Mode"]
+  - name: "Calendar View"
+    flows: ["Viewing Streak Status"]
+  - name: "History List"
+    flows: ["Reviewing Session History"]
+  - name: "Badges"
+    flows: ["Viewing Unlocked Badges"]
   - name: "Settings"
-    screens: ["Notifications", "Data", "Theme", "About"]
-    prd_coverage: ["PR-006", "PR-105"]
-key_components:
-  - SubjectCard
-  - StreakBadge
-  - DurationInput
-  - CalendarHeatmap
-  - Toast
+    flows: ["Managing Notification Settings"]
+p0_requirements_covered:
+  - "PR-001" (Daily study timer)
+  - "PR-002" (Flexible streak system)
+  - "PR-003" (Pomodoro mode)
+  - "PR-004" (Daily goal setting)
+  - "PR-005" (Streak visualization)
+  - "PR-007" (Daily reminder notification)
+  - "PR-008" (Core badge system)
+  - "PR-009" (Session history)
+  - "PR-010" (Background timer)
+p1_requirements_covered:
+  - "PR-101" (Subject tagging)
+  - "PR-103" (Extended badge set)
+  - "PR-106" (Customizable reminder time)
 visual_direction:
-  primary_color: "#F97316"
-  style: "Warm, encouraging, clean"
-  animation: "Reanimated, 60fps, celebration on milestones"
-open_questions:
-  - "Streak break visualization: Red badge or just reset?"
-  - "Calendar heatmap color scale: How many intensity levels?"
-  - "Exam mode: Show on all subjects or separate tab?"
+  tone: "Encouraging, calm, focused"
+  primary_color: "#F59E0B (warm amber)"
+  secondary_color: "#0D9488 (deep teal)"
+  success_color: "#10B981 (vibrant green)"
+  reference_apps: ["Duolingo", "Forest", "Streaks", "Headspace"]
+key_risks:
+  - "User confusion about flexible streak vs rigid streak expectations—requires clear onboarding"
+  - "Background timer accuracy across different devices/OS versions"
+  - "Notification reliability on Android with battery optimizations"
+  - "Data loss if user uninstalls app (no cloud backup in MVP)"
+  - "Session interruption handling (phone calls, app crashes)"
+open_questions_addressed:
+  - "Minimum session duration: 5 minutes (shown in warning if under)"
+  - "Rest day policy: 2 floating rest days per week (not fixed)"
+  - "Pomodoro default: Off by default, user toggles on"
+  - "Notification strategy: Single daily reminder (configurable time)"
+  - "Session interruption: Auto-pause on calls, recovery prompt on crash"
 ```
 
 ---
 
 ## Handoff Contract
 
-**Next Agent**: `user-stories`
+**Next Agent:** `user-stories`
 
-**Required Artifacts**:
-- `docs/product-delegated-context2/ux.md` (this document)
+**Required Artifacts:**
 - `docs/product-delegated-context2/prd.md`
+- `docs/product-delegated-context2/ux.md` (this document)
 
-**Recommended Artifacts**:
+**Recommended Artifacts:**
 - `docs/product-delegated-context2/brainstorm.md`
 
-**Critical Inputs**:
-- All 6 primary flows must be implemented
-- Visual design system (colors, typography, components)
-- PRD requirement IDs mapped to each flow
-- Accessibility requirements
+**Critical Inputs That Must Remain Stable:**
+- Target audience: Students (age ~16-25)
+- Core mechanic: Flexible streak (5 days/week minimum, 2 floating rest days)
+- Platform: Mobile iOS/Android via Expo/React Native
+- Key differentiator: Flexible streak + Pomodoro + Badges combination
+- All 7 primary flows and their associated PRD requirement mappings
+- Visual direction: Warm amber primary, calm teal secondary, encouraging tone
 
-**Sections That Must Not Change**:
-- Primary flow structures
-- Screen names and purposes
-- Component specifications
+**Sections That Must Not Change:**
+- User Goal
+- Primary Flows (all 7 flows with their structure)
+- Screen/Component Breakdown (9 screens defined)
+- Interaction Patterns (navigation, feedback, timer behavior)
+- Copy Direction (actual copy provided, not placeholders)
+- Accessibility requirements
 - PRD requirement mappings
 
-**Mapping Rules**:
-- Every flow maps to 1+ user stories
-- Every P0 PRD requirement must have acceptance criteria in stories
-- Component specs become implementation boundaries
-- Edge cases become test cases
+**Mapping Rules:**
+- Every primary flow must map to at least one user story
+- Every screen/component referenced by a flow must appear in at least one story
+- Every P0 requirement referenced from the PRD must remain covered in stories
+- Copy direction must flow into story acceptance criteria
+- Accessibility requirements must be included in story acceptance criteria
+- Visual direction should inform story implementation notes
 
-**Notes for User Stories Agent**:
-- Onboarding flow should be one epic with 3-4 stories
-- Daily log entry is the core flow - prioritize
-- Subject card component is reused across multiple flows
-- Exam mode can be split into setup vs. dashboard integration stories
-- Settings are lower priority (P1) except notification setup
+**What User Stories Should Produce:**
+- Individual user stories for each flow step
+- Acceptance criteria including copy and accessibility requirements
+- Story points/estimates
+- Implementation notes referencing components and screens
+- Test cases for edge cases identified in flows
