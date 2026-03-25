@@ -39,6 +39,10 @@ export interface Streak {
   todayStudyTime: number;
   /** Daily goal in milliseconds (default: 30 minutes = 1800000ms) */
   dailyGoalMs: number;
+  /** Whether streak was broken and not yet acknowledged by user */
+  streakBrokenAcknowledged: boolean;
+  /** Date when streak was broken (YYYY-MM-DD), null if not broken */
+  streakBrokenDate: string | null;
 }
 
 /**

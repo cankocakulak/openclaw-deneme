@@ -151,6 +151,8 @@ const DEFAULT_STREAK: Streak = {
   todayCompleted: false,
   todayStudyTime: 0,
   dailyGoalMs: 30 * 60 * 1000, // 30 minutes in milliseconds
+  streakBrokenAcknowledged: true,
+  streakBrokenDate: null,
 };
 
 /**
@@ -446,6 +448,86 @@ export async function checkStorageHealth(): Promise<StorageResult<boolean>> {
     return {
       success: false,
       error: 'Depolama sistemi çalışmıyor. Lütfen uygulamayı yeniden başlatın.',
+    };
+  }
+}
+
+// ============================================================================
+// Weekly Calendar Data Functions
+// ============================================================================
+
+export interface CalendarDayData {
+  dayName: string;
+  date: number;
+  status: 'completed' | 'missed' | 'today' | 'pending';
+  isWeekend: boolean;
+  fullDate: string;
+}
+
+/**
+ * Get weekly calendar data for the current week
+ * Returns 7 days starting from Monday with completion status
+ */
+export async function getWeeklyCalendarData(): Promise<StorageResult<CalendarDayData[]>> {
+  try {
+    const today = new Date();
+    const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday
+    
+    // Adjust so Monday is the first day of the week
+    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + mondayOffset);
+    
+    const dayNames = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+    const calendarData: CalendarDayData[] = [];
+    
+    // Get all sessions to check completion status
+    const sessionsResult = await getAllSessions();
+    const sessions = sessionsResult.success && sessionsResult.data ? sessionsResult.data : [];
+    
+    // Get streak to check last completed date
+    const streakResult = await getStreak();
+    const streak = streakResult.success && streakResult.data ? streakResult.data : null;
+    
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      
+      const dateString = date.toISOString().split('T')[0];
+      const isToday = date.toDateString() === today.toDateString();
+      const isWeekend = i >= 5; // Saturday or Sunday (index 5, 6)
+      
+      let status: 'completed' | 'missed' | 'today' | 'pending' = 'pending';
+      
+      // Check if this day has completed sessions meeting the daily goal
+      const daySessions = sessions.filter(s => s.date === dateString && s.completed);
+      const dayTotal = daySessions.reduce((sum, s) => sum + s.duration, 0);
+      const dailyGoalMs = (streak?.dailyGoalMs || 30 * 60 * 1000);
+      const dayCompleted = dayTotal >= dailyGoalMs;
+      
+      if (isToday) {
+        status = 'today';
+      } else if (dayCompleted) {
+        status = 'completed';
+      } else if (date < today) {
+        // Past day without completion = missed
+        status = 'missed';
+      }
+      
+      calendarData.push({
+        dayName: dayNames[i],
+        date: date.getDate(),
+        status,
+        isWeekend,
+        fullDate: dateString,
+      });
+    }
+    
+    return { success: true, data: calendarData };
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Haftalık takvim verileri alınırken bir hata oluştu.',
     };
   }
 }

@@ -39,7 +39,7 @@
       ],
       "dependencies": ["TASK-001"],
       "priority": 2,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Ana ekrandan kronometre ekranına geçiş, başlat/duraklat/bitir kontrolleri, süre kaydı. Hariç: İstatistik görüntüleme, not ekleme (P1), arka plan bildirimleri (P1). PRD refs: PR-001, PR-004. UX refs: Günlük Çalışma Başlatma ve Kaydetme."
     },
     {
@@ -59,7 +59,7 @@
       ],
       "dependencies": ["TASK-001", "TASK-002"],
       "priority": 3,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Günlük 30 dk hedef kontrolü, zincir artışı/sıfırlanması, ana ekranda zincir gösterimi, hedef tamamlama onayı. Hariç: İkinci şans mekanizması (P1), esnek mod (P1), konu bazlı zincirler (P2). PRD refs: PR-002. UX refs: Zincir Görüntüleme ve Hedef Takibi."
     },
     {
@@ -79,7 +79,7 @@
       ],
       "dependencies": ["TASK-003"],
       "priority": 4,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Ana ekranda 7 günlük takvim göstergesi, tamamlanan/bekleyen/bugün gösterimi. Hariç: Geçmiş haftalara gezinme (opsiyonel), takvim detayları (tıklanabilir günler). PRD refs: PR-002, PR-005. UX refs: Zincir Görüntüleme ve Hedef Takibi."
     },
     {
@@ -98,7 +98,7 @@
       ],
       "dependencies": ["TASK-001", "TASK-003"],
       "priority": 5,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Ana ekranda özet istatistikler, İstatistikler sekmesinde detaylı görünüm, haftalık grafik, en uzun zincir rekoru. Hariç: Aylık grafik (opsiyonel), detaylı analitik (out of scope), ders bazlı istatistikler (P2). PRD refs: PR-005. UX refs: İstatistik Görüntüleme, Zincir Görüntüleme."
     },
     {
@@ -116,7 +116,7 @@
       ],
       "dependencies": ["TASK-003"],
       "priority": 6,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Zincir kırılma tespiti ve sıfırlama. PRD refs: PR-002. UX refs: Zincir Görüntüleme. Bu task ZINCIR-103 (ikinci şans) için foundation sağlar."
     },
     {
@@ -135,7 +135,7 @@
       ],
       "dependencies": ["TASK-003", "TASK-004"],
       "priority": 7,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Ayarlardan mod değişimi, haftalık hedef takibi, esnek mod UI gösterimi. Hariç: Mevcut zincirin mod değişiminde nasıl etkileneceği (ürün kararı gerektirir). PRD refs: PR-101. UX refs: Ayarlar ve Tercihler."
     },
     {
@@ -154,7 +154,7 @@
       ],
       "dependencies": ["TASK-002"],
       "priority": 8,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Kronometre ekranında '+ Not' linki, not girişi modalı, notların kaydedilmesi. Hariç: Not arama, not kategorileri, detaylı not yönetimi. PRD refs: PR-102. UX refs: Günlük Çalışma Başlatma."
     },
     {
@@ -173,7 +173,7 @@
       ],
       "dependencies": ["TASK-006"],
       "priority": 9,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Zincir kırılma dialogu, ikinci şans teklifi, kurtarma mekanizması, bir kez kullanım sınırı. Hariç: Kurtarma jetonu sistemi (alternatif), birden fazla ikinci şans. PRD refs: PR-103. UX refs: Zincir Görüntüleme, Zincir Kırılma Dialog'u."
     },
     {
@@ -192,7 +192,7 @@
       ],
       "dependencies": ["TASK-003"],
       "priority": 10,
-      "status": "pending",
+      "status": "done",
       "notes": "Implementation Boundary: Günlük hatırlatma bildirimi, hedef saat yaklaşınca uyarı, bildirim saati ayarı, izin yönetimi. Hariç: Dinamik bildirim saati (son çalışmaya göre), sosyal bildirimler. PRD refs: PR-104. UX refs: Ayarlar ve Tercihler."
     }
   ]
