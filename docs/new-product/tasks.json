@@ -1,0 +1,199 @@
+{
+  "project": "Zincir",
+  "branchName": "ralph/zincir-study-tracker",
+  "description": "Basit, offline çalışan bir zincir (streak) uygulaması ile öğrencilere düzenli çalışma alışkanlığı kazandırmak; kaybetme korkusu (loss aversion) psikolojisinden faydalanarak motivasyon sağlamak.",
+  "docsPath": "docs/new-product",
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "parentStoryId": "ZINCIR-003",
+      "lineage": ["ZINCIR-003"],
+      "title": "Offline-First Veri Depolama Altyapısı",
+      "description": "AsyncStorage/MMKV entegrasyonu ile tüm verilerin yerel olarak saklanması. Oturum verileri, zincir durumu ve kullanıcı tercihleri için veri modelleri ve CRUD operasyonları.",
+      "acceptanceCriteria": [
+        "AsyncStorage veya MMKV kurulumu ve yapılandırması tamamlanmış",
+        "Session, Streak, UserPreferences modelleri tanımlanmış",
+        "Veri kaydetme, okuma, güncelleme, silme fonksiyonları çalışır",
+        "Veri kaybı durumunda error handling ve kullanıcı bildirimi mevcut",
+        "Typecheck passes"
+      ],
+      "dependencies": [],
+      "priority": 1,
+      "status": "done",
+      "notes": "Implementation Boundary: Tüm verilerin yerel depolanması, offline çalışma garantisi. PRD refs: PR-003. UX refs: Günlük Çalışma Başlatma, İstatistik Görüntüleme. Bu task diğer tüm tasklar için foundation görevi görür."
+    },
+    {
+      "id": "TASK-002",
+      "parentStoryId": "ZINCIR-001",
+      "lineage": ["ZINCIR-001"],
+      "title": "Kronometre Ekranı ve Kontrolleri",
+      "description": "Kronometre ekranı UI implementasyonu: büyük dijital sayaç (mm:ss format, 72px+), başlat/duraklat/devam et/bitir kontrolleri. Arka planda sayacın çalışmaya devam etmesi.",
+      "acceptanceCriteria": [
+        "Kronometre ekranı açılır ve sayaç 00:00'dan başlar",
+        "Başlat butonu sayacı çalıştırır",
+        "Duraklat butonu sayacı dondurur ve 'Devam Et' görünür",
+        "Devam Et sayacı kaldığı yerden devam ettirir",
+        "Bitir butonu süreyi kaydeder ve ana ekrana döner",
+        "Uygulama arka plandayken sayaç çalışmaya devam eder",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-001"],
+      "priority": 2,
+      "status": "pending",
+      "notes": "Implementation Boundary: Ana ekrandan kronometre ekranına geçiş, başlat/duraklat/bitir kontrolleri, süre kaydı. Hariç: İstatistik görüntüleme, not ekleme (P1), arka plan bildirimleri (P1). PRD refs: PR-001, PR-004. UX refs: Günlük Çalışma Başlatma ve Kaydetme."
+    },
+    {
+      "id": "TASK-003",
+      "parentStoryId": "ZINCIR-002",
+      "lineage": ["ZINCIR-002"],
+      "title": "Zincir Sistemi ve Hedef Takibi",
+      "description": "Günlük 30 dk hedef kontrolü, zincir artışı/sıfırlanması mantığı. Ana ekranda zincir sayısı gösterimi ve hedef tamamlama onayı.",
+      "acceptanceCriteria": [
+        "Ana ekranda mevcut zincir sayısı büyük olarak görünür",
+        "30 dk hedefi tamamlandığında zincir 1 artar",
+        "Hedef tamamlanmadan bitirilen oturumlar süreye eklenir ama zincir artmaz",
+        "Hedef tamamlandığında hafif titreşim (haptic) ve sayı animasyonu (count up)",
+        "Hedef tamamlandığında 'Tebrikler! Zinciriniz devam ediyor.' toast mesajı",
+        "Zincir kırılma riski varsa turuncu uyarı banner'ı görünür",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-001", "TASK-002"],
+      "priority": 3,
+      "status": "pending",
+      "notes": "Implementation Boundary: Günlük 30 dk hedef kontrolü, zincir artışı/sıfırlanması, ana ekranda zincir gösterimi, hedef tamamlama onayı. Hariç: İkinci şans mekanizması (P1), esnek mod (P1), konu bazlı zincirler (P2). PRD refs: PR-002. UX refs: Zincir Görüntüleme ve Hedef Takibi."
+    },
+    {
+      "id": "TASK-004",
+      "parentStoryId": "ZINCIR-005",
+      "lineage": ["ZINCIR-005"],
+      "title": "Haftalık İlerleme Takvimi UI",
+      "description": "Ana ekranda 7 günlük takvim göstergesi implementasyonu. Tamamlanan/bekleyen/bugün gösterimi için görsel durumlar.",
+      "acceptanceCriteria": [
+        "Ana ekranda haftalık 7 günün durumunu gösteren göstergeler görünür",
+        "Tamamlanan günler yeşil/amber olarak işaretlenir",
+        "Kaçırılan günler gri/kırmızı olarak işaretlenir",
+        "Bugün özel olarak işaretlenir (amber/vurgulu)",
+        "Yeni kullanıcıda tüm günler 'bekliyor' durumunda görünür",
+        "Hafta başı Pazartesi olarak kabul edilir",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-003"],
+      "priority": 4,
+      "status": "pending",
+      "notes": "Implementation Boundary: Ana ekranda 7 günlük takvim göstergesi, tamamlanan/bekleyen/bugün gösterimi. Hariç: Geçmiş haftalara gezinme (opsiyonel), takvim detayları (tıklanabilir günler). PRD refs: PR-002, PR-005. UX refs: Zincir Görüntüleme ve Hedef Takibi."
+    },
+    {
+      "id": "TASK-005",
+      "parentStoryId": "ZINCIR-004",
+      "lineage": ["ZINCIR-004"],
+      "title": "İstatistikler Ekranı ve Grafikler",
+      "description": "İstatistikler sekmesi implementasyonu: özet kartlar (Bugün, Bu Hafta, Bu Ay), son 7 günün çubuk grafikleri, en uzun zincir rekoru.",
+      "acceptanceCriteria": [
+        "İstatistikler sekmesinde üç özet kart görünür: Bugün, Bu Hafta, Bu Ay",
+        "Son 7 günün çubuk grafikleri görünür",
+        "En Uzun Zincir rekoru görünür",
+        "Yetersiz veride 'Henüz çalışma kaydınız yok' mesajı görünür",
+        "Haftalık görünüm Pazartesi'den Pazar'a doğru sıralanır",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-001", "TASK-003"],
+      "priority": 5,
+      "status": "pending",
+      "notes": "Implementation Boundary: Ana ekranda özet istatistikler, İstatistikler sekmesinde detaylı görünüm, haftalık grafik, en uzun zincir rekoru. Hariç: Aylık grafik (opsiyonel), detaylı analitik (out of scope), ders bazlı istatistikler (P2). PRD refs: PR-005. UX refs: İstatistik Görüntüleme, Zincir Görüntüleme."
+    },
+    {
+      "id": "TASK-006",
+      "parentStoryId": "ZINCIR-002",
+      "lineage": ["ZINCIR-002"],
+      "title": "Zincir Kırılma Tespiti ve Sıfırlama",
+      "description": "Zincir kırılma mantığı: Bir gün kaçırıldığında zincirin sıfırlanması ve kullanıcıya bildirim. 'Zinciriniz kırıldı' mesajı.",
+      "acceptanceCriteria": [
+        "Bir gün hedef tamamlanmadan geçtiğinde zincir sıfırlanır",
+        "Zincir kırıldığında kullanıcıya mesaj gösterilir",
+        "Yeni kullanıcı '0 günlük zincir' ile başlar",
+        "Zincir sıfırlandığında veri tutarlılığı korunur",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-003"],
+      "priority": 6,
+      "status": "pending",
+      "notes": "Implementation Boundary: Zincir kırılma tespiti ve sıfırlama. PRD refs: PR-002. UX refs: Zincir Görüntüleme. Bu task ZINCIR-103 (ikinci şans) için foundation sağlar."
+    },
+    {
+      "id": "TASK-007",
+      "parentStoryId": "ZINCIR-101",
+      "lineage": ["ZINCIR-101"],
+      "title": "Esnek Zincir Modu (P1)",
+      "description": "Ayarlar ekranında 'Günlük Zincir' ve 'Esnek Zincir' mod seçimi. Haftada 5 veya 6 gün hedef ayarı ve haftalık takip UI'sı.",
+      "acceptanceCriteria": [
+        "Ayarlar ekranında 'Günlük Zincir' ve 'Esnek Zincir' seçenekleri görünür",
+        "Esnek Zincir seçildiğinde haftada 5 veya 6 gün seçilebilir",
+        "Esnek Mod aktifken ana ekranda 'Bu hafta: X/5 gün tamamlandı' görünür",
+        "Haftalık hedef tamamlanmadan hafta bittiğinde zincir kırılır",
+        "Mod değişikliği tercihleri yerel olarak saklanır",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-003", "TASK-004"],
+      "priority": 7,
+      "status": "pending",
+      "notes": "Implementation Boundary: Ayarlardan mod değişimi, haftalık hedef takibi, esnek mod UI gösterimi. Hariç: Mevcut zincirin mod değişiminde nasıl etkileneceği (ürün kararı gerektirir). PRD refs: PR-101. UX refs: Ayarlar ve Tercihler."
+    },
+    {
+      "id": "TASK-008",
+      "parentStoryId": "ZINCIR-102",
+      "lineage": ["ZINCIR-102"],
+      "title": "Çalışma Notları Ekleme (P1)",
+      "description": "Kronometre ekranında '+ Not' linki, not girişi modalı (140 karakter sınırlı), notların oturumla kaydedilmesi.",
+      "acceptanceCriteria": [
+        "Kronometre ekranında '+ Not' linki görünür",
+        "'+ Not'a basıldığında 140 karakter sınırlı metin girişi modalı açılır",
+        "Not girilip kaydedildiğinde oturumla birlikte saklanır",
+        "Not eklenmemişse oturum kaydı sorunsuz tamamlanır",
+        "Notlar veri modeline eklenmiştir",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-002"],
+      "priority": 8,
+      "status": "pending",
+      "notes": "Implementation Boundary: Kronometre ekranında '+ Not' linki, not girişi modalı, notların kaydedilmesi. Hariç: Not arama, not kategorileri, detaylı not yönetimi. PRD refs: PR-102. UX refs: Günlük Çalışma Başlatma."
+    },
+    {
+      "id": "TASK-009",
+      "parentStoryId": "ZINCIR-103",
+      "lineage": ["ZINCIR-103"],
+      "title": "Zincir Kırılma Yönetimi - İkinci Şans (P1)",
+      "description": "Zincir kırılma dialogu: 'X günlük zincirinizi kaçırdınız' mesajı, 'Bugün çalışıp devam et' ve 'Yeni başlangıç yap' seçenekleri. İkinci şans kullanım takibi.",
+      "acceptanceCriteria": [
+        "Zincir kırıldığında 'Zinciriniz Kırıldı' modalı görünür",
+        "Modal'da 'Bugün çalışıp devam et' ve 'Yeni başlangıç yap' seçenekleri var",
+        "'Bugün çalışıp devam et' seçildiğinde bugün 30 dk çalışılırsa zincir devam eder",
+        "İkinci şans sadece bir kez kullanılabilir",
+        "İkinci şans kullanıldıktan sonra bir daha teklif edilmez",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-006"],
+      "priority": 9,
+      "status": "pending",
+      "notes": "Implementation Boundary: Zincir kırılma dialogu, ikinci şans teklifi, kurtarma mekanizması, bir kez kullanım sınırı. Hariç: Kurtarma jetonu sistemi (alternatif), birden fazla ikinci şans. PRD refs: PR-103. UX refs: Zincir Görüntüleme, Zincir Kırılma Dialog'u."
+    },
+    {
+      "id": "TASK-010",
+      "parentStoryId": "ZINCIR-104",
+      "lineage": ["ZINCIR-104"],
+      "title": "Push Bildirimleri (P1)",
+      "description": "React Native Push Notification entegrasyonu: Günlük hatırlatma bildirimi (varsayılan 20:00), zincir kırılma riski uyarısı, bildirim saati ayarı.",
+      "acceptanceCriteria": [
+        "Ayarlar ekranında bildirim saati ayarlanabilir (varsayılan: 20:00)",
+        "Ayarlanan saatte 'Bugünkü çalışmanızı yapmayı unutmayın!' bildirimi gösterilir",
+        "Zincir kırılma riski varsa 'Zincirinizi korumak için X saatiniz var!' bildirimi gösterilir",
+        "Bildirim izni reddedildiğinde manuel yönlendirme talimatı görünür",
+        "Bildirim ayarları yerel olarak saklanır",
+        "Typecheck passes"
+      ],
+      "dependencies": ["TASK-003"],
+      "priority": 10,
+      "status": "pending",
+      "notes": "Implementation Boundary: Günlük hatırlatma bildirimi, hedef saat yaklaşınca uyarı, bildirim saati ayarı, izin yönetimi. Hariç: Dinamik bildirim saati (son çalışmaya göre), sosyal bildirimler. PRD refs: PR-104. UX refs: Ayarlar ve Tercihler."
+    }
+  ]
+}
