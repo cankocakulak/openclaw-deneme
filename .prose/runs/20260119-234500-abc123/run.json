@@ -1,0 +1,17 @@
+{
+  "run_id": "20260119-234500-abc123",
+  "program": "product-to-spec.prose",
+  "inputs": {
+    "idea": "Öğrencinin çalıştığı saatleri günden güne takip edebileceği zincir uygulaması",
+    "target_repo": "/Users/mcan/openclaw-deneme",
+    "project_name": "new-product",
+    "analysis_artifact": "",
+    "constraints": "",
+    "direction": "",
+    "audience": "öğrenciler",
+    "product_context": "",
+    "platform": "mobile",
+    "branding_context": "",
+    "personas": "öğrenci"
+  }
+}

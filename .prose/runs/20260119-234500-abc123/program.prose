@@ -1,0 +1,131 @@
+# product-to-spec.prose
+
+# ViberMode Product to Spec
+# Serial specification pipeline for idea -> brainstorm -> PRD -> UX -> stories
+# Scope intentionally excludes analyzer, task-planner, ACP, cron, and code execution.
+
+input idea: "Raw product idea or feature description"
+input target_repo: "Absolute path to the target repository where docs/[project-name]/ lives"
+input project_name: "Project slug used under docs/[project-name]"
+input analysis_artifact: "Optional analysis artifact path; pass empty string if not available"
+input constraints: "Optional product or delivery constraints; pass empty string if not needed"
+input direction: "Optional brainstorm bias or preferred direction; pass empty string if not needed"
+input audience: "Optional target audience; pass empty string if not needed"
+input product_context: "Optional business or product context; pass empty string if not needed"
+input platform: "Optional platform hint for UX; pass empty string if not needed"
+input branding_context: "Optional branding guidance for UX; pass empty string if not needed"
+input personas: "Optional user personas for story writing; pass empty string if not needed"
+
+let workflow_workspace = "/Users/mcan/.openclaw/agents/vibermode-orchestrator/workspace"
+let artifact_dir = "{target_repo}/docs/{project_name}"
+let brainstorm_path = "{artifact_dir}/brainstorm.md"
+let prd_path = "{artifact_dir}/prd.md"
+let ux_path = "{artifact_dir}/ux.md"
+let stories_path = "{artifact_dir}/stories.md"
+
+agent stage-runner:
+  model: sonnet
+  prompt: """You execute exactly one ViberMode product stage inside the vibermode-orchestrator workspace.
+
+Before writing anything:
+1. Read the referenced skill file and treat it as the stage contract.
+2. If a template file is provided, use it as the required document structure.
+3. Read any upstream artifacts that are provided and exist.
+
+Execution rules:
+- Preserve the ViberMode role contract as closely as possible.
+- Create the output directory if it does not exist.
+- Write the requested artifact to the exact path provided.
+- Keep headings, IDs, mappings, summary blocks, and handoff blocks stable.
+- Do not continue into later pipeline stages.
+- If an optional input is empty, ignore it rather than inventing detail.
+"""
+
+let brainstorm_artifact = session: stage-runner
+  prompt: """Run the brainstorm stage.
+
+Skill name: brainstormer
+Skill file: {workflow_workspace}/skills/brainstormer/SKILL.md
+
+Primary input:
+- topic: {idea}
+
+Optional inputs:
+- analysis_artifact: {analysis_artifact}
+- constraints: {constraints}
+- direction: {direction}
+
+Required output:
+- Write the full brainstorm artifact to {brainstorm_path}
+
+Do not write PRD, UX, or stories in this stage."""
+
+let prd_artifact = session: stage-runner
+  prompt: """Run the PRD stage.
+
+Skill name: prd
+Skill file: {workflow_workspace}/skills/prd/SKILL.md
+Template file: {workflow_workspace}/skills/prd/templates/prd-template.md
+
+Primary inputs:
+- feature: {idea}
+- brainstorm_artifact: {brainstorm_path}
+
+Optional inputs:
+- analysis_artifact: {analysis_artifact}
+- audience: {audience}
+- context: {product_context}
+- constraints: {constraints}
+
+Required output:
+- Write the full PRD artifact to {prd_path}
+
+Preserve stable requirement IDs and the downstream summary + handoff sections."""
+
+let ux_artifact = session: stage-runner
+  prompt: """Run the UX stage.
+
+Skill name: ux-designer
+Skill file: {workflow_workspace}/skills/ux-designer/SKILL.md
+Template file: {workflow_workspace}/skills/ux-designer/templates/ux-spec-template.md
+
+Primary inputs:
+- prd_artifact: {prd_path}
+
+Optional inputs:
+- analysis_artifact: {analysis_artifact}
+- brainstorm_artifact: {brainstorm_path}
+- platform: {platform}
+- branding_context: {branding_context}
+
+Required output:
+- Write the full UX artifact to {ux_path}
+
+Treat the PRD as the contract. Do not redesign scope."""
+
+let stories_artifact = session: stage-runner
+  prompt: """Run the user stories stage.
+
+Skill name: user-stories
+Skill file: {workflow_workspace}/skills/user-stories/SKILL.md
+Template file: {workflow_workspace}/skills/user-stories/templates/stories-template.md
+
+Primary inputs:
+- prd_artifact: {prd_path}
+- ux_artifact: {ux_path}
+
+Optional inputs:
+- analysis_artifact: {analysis_artifact}
+- personas: {personas}
+- context: {product_context}
+
+Required output:
+- Write the full stories artifact to {stories_path}
+
+Preserve story IDs, coverage map, summary, and handoff contract."""
+
+output artifact_directory = artifact_dir
+output brainstorm_output = brainstorm_path
+output prd_output = prd_path
+output ux_output = ux_path
+output stories_output = stories_path
