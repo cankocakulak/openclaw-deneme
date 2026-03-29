@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "ios": "react-native run-ios --terminal Terminal",
     "lint": "eslint .",
     "start": "react-native start",
+    "dev": "open -a Simulator && sleep 3 && xcrun simctl launch booted org.reactjs.native.example.Zincir & react-native start",
     "test": "jest"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "react": "19.2.3",
     "react-native": "0.84.1",
     "react-native-mmkv": "^4.3.0",
+    "react-native-nitro-modules": "^0.35.2",
     "react-native-safe-area-context": "^5.5.2",
     "zustand": "^5.0.12"
   },

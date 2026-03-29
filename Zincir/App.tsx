@@ -17,6 +17,7 @@ import {
   Alert,
   AppState,
   AppStateStatus,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAppStore } from './src/store';
@@ -215,121 +216,128 @@ function App(): React.JSX.Element {
         </Animated.View>
       )}
 
-      {/* Streak Break Warning Banner */}
-      {showStreakWarning && (
-        <View style={styles.warningBanner}>
-          <Text style={styles.warningText}>
-            ⚠️ Zincirinizi korumak için {hoursRemaining} saatiniz var!
-          </Text>
-        </View>
-      )}
-
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.appTitle}>Zincir</Text>
-      </View>
-
-      {/* Streak Card */}
-      <View style={styles.streakCard}>
-        <Text style={styles.streakEmoji}>🔥</Text>
-        <Text style={styles.streakNumber}>
-          {displayedStreak}
-        </Text>
-        <Text style={styles.streakLabel}>
-          {isFlexibleMode ? 'haftalık zincir' : 'günlük zincir'}
-        </Text>
-        {streak && streak.longestStreak > 0 && (
-          <Text style={styles.bestStreak}>
-            En iyi: {streak.longestStreak} gün
-          </Text>
-        )}
-      </View>
-
-      {/* Flexible Mode Weekly Progress */}
-      {isFlexibleMode && (
-        <View style={styles.flexibleProgressSection}>
-          <View style={styles.flexibleProgressHeader}>
-            <Text style={styles.flexibleProgressTitle}>Bu Hafta</Text>
-            <Text style={styles.flexibleProgressCount}>
-              {weeklyDaysCompleted}/{flexibleTarget} gün
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        alwaysBounceVertical={true}
+      >
+        {/* Streak Break Warning Banner */}
+        {showStreakWarning && (
+          <View style={styles.warningBanner}>
+            <Text style={styles.warningText}>
+              ⚠️ Zincirinizi korumak için {hoursRemaining} saatiniz var!
             </Text>
           </View>
-          <View style={styles.flexibleProgressBarBackground}>
-            <View 
-              style={[
-                styles.flexibleProgressBarFill, 
-                { width: `${weeklyProgressPercent}%` },
-                weeklyDaysCompleted >= flexibleTarget && styles.flexibleProgressBarComplete
-              ]} 
-            />
-          </View>
-          {weeklyDaysCompleted >= flexibleTarget ? (
-            <Text style={styles.flexibleGoalComplete}>🎉 Haftalık hedef tamamlandı!</Text>
-          ) : (
-            <Text style={styles.flexibleGoalRemaining}>
-              {flexibleTarget - weeklyDaysCompleted} gün daha tamamla
+        )}
+
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.appTitle}>Zincir</Text>
+        </View>
+
+        {/* Streak Card */}
+        <View style={styles.streakCard}>
+          <Text style={styles.streakEmoji}>🔥</Text>
+          <Text style={styles.streakNumber}>
+            {displayedStreak}
+          </Text>
+          <Text style={styles.streakLabel}>
+            {isFlexibleMode ? 'haftalık zincir' : 'günlük zincir'}
+          </Text>
+          {streak && streak.longestStreak > 0 && (
+            <Text style={styles.bestStreak}>
+              En iyi: {streak.longestStreak} gün
             </Text>
           )}
         </View>
-      )}
 
-      {/* Weekly Calendar */}
-      {weeklyCalendar && (
-        <WeeklyCalendar days={weeklyCalendar} />
-      )}
-
-      {/* Today's Progress */}
-      <View style={styles.progressSection}>
-        <Text style={styles.progressTitle}>Bugün</Text>
-        <Text style={styles.progressTime}>{todayFormatted}</Text>
-        
-        {/* Progress Bar */}
-        <View style={styles.progressBarContainer}>
-          <View style={styles.progressBarBackground}>
-            <View 
-              style={[
-                styles.progressBarFill, 
-                { width: `${progressPercent}%` },
-                isGoalComplete && styles.progressBarComplete
-              ]} 
-            />
+        {/* Flexible Mode Weekly Progress */}
+        {isFlexibleMode && (
+          <View style={styles.flexibleProgressSection}>
+            <View style={styles.flexibleProgressHeader}>
+              <Text style={styles.flexibleProgressTitle}>Bu Hafta</Text>
+              <Text style={styles.flexibleProgressCount}>
+                {weeklyDaysCompleted}/{flexibleTarget} gün
+              </Text>
+            </View>
+            <View style={styles.flexibleProgressBarBackground}>
+              <View 
+                style={[
+                  styles.flexibleProgressBarFill, 
+                  { width: `${weeklyProgressPercent}%` },
+                  weeklyDaysCompleted >= flexibleTarget && styles.flexibleProgressBarComplete
+                ]} 
+              />
+            </View>
+            {weeklyDaysCompleted >= flexibleTarget ? (
+              <Text style={styles.flexibleGoalComplete}>🎉 Haftalık hedef tamamlandı!</Text>
+            ) : (
+              <Text style={styles.flexibleGoalRemaining}>
+                {flexibleTarget - weeklyDaysCompleted} gün daha tamamla
+              </Text>
+            )}
           </View>
-          <Text style={styles.progressPercent}>
-            {Math.round(progressPercent)}%
-          </Text>
-        </View>
-
-        {isGoalComplete ? (
-          <Text style={styles.goalCompleteText}>🎉 Hedef tamamlandı!</Text>
-        ) : (
-          <Text style={styles.goalRemainingText}>
-            Hedef: {preferences?.dailyGoalMinutes || 30} dk
-          </Text>
         )}
-      </View>
 
-      {/* Weekly Summary */}
-      {statistics && statistics.weekTotal > 0 && (
-        <View style={styles.weeklySection}>
-          <Text style={styles.weeklyLabel}>Bu Hafta</Text>
-          <Text style={styles.weeklyTime}>
-            {formatDurationHuman(statistics.weekTotal)}
-          </Text>
+        {/* Weekly Calendar */}
+        {weeklyCalendar && (
+          <WeeklyCalendar days={weeklyCalendar} />
+        )}
+
+        {/* Today's Progress */}
+        <View style={styles.progressSection}>
+          <Text style={styles.progressTitle}>Bugün</Text>
+          <Text style={styles.progressTime}>{todayFormatted}</Text>
+          
+          {/* Progress Bar */}
+          <View style={styles.progressBarContainer}>
+            <View style={styles.progressBarBackground}>
+              <View 
+                style={[
+                  styles.progressBarFill, 
+                  { width: `${progressPercent}%` },
+                  isGoalComplete && styles.progressBarComplete
+                ]} 
+              />
+            </View>
+            <Text style={styles.progressPercent}>
+              {Math.round(progressPercent)}%
+            </Text>
+          </View>
+
+          {isGoalComplete ? (
+            <Text style={styles.goalCompleteText}>🎉 Hedef tamamlandı!</Text>
+          ) : (
+            <Text style={styles.goalRemainingText}>
+              Hedef: {preferences?.dailyGoalMinutes || 30} dk
+            </Text>
+          )}
         </View>
-      )}
 
-      {/* Start Button */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={styles.startButton}
-          onPress={handleStartPress}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.startButtonText}>
-            {todayTotal > 0 ? 'Devam Et' : 'Başla'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Weekly Summary */}
+        {statistics && statistics.weekTotal > 0 && (
+          <View style={styles.weeklySection}>
+            <Text style={styles.weeklyLabel}>Bu Hafta</Text>
+            <Text style={styles.weeklyTime}>
+              {formatDurationHuman(statistics.weekTotal)}
+            </Text>
+          </View>
+        )}
+
+        {/* Start Button */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={styles.startButton}
+            onPress={handleStartPress}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.startButtonText}>
+              {todayTotal > 0 ? 'Devam Et' : 'Başla'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 
@@ -532,9 +540,14 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    paddingHorizontal: 24,
     paddingTop: 60,
-    paddingBottom: 80, // Space for tab bar
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 100,
   },
   header: {
     alignItems: 'center',
@@ -695,7 +708,7 @@ const styles = StyleSheet.create({
     color: '#166534',
   },
   buttonContainer: {
-    marginTop: 'auto',
+    marginTop: 8,
     marginBottom: 20,
   },
   startButton: {
